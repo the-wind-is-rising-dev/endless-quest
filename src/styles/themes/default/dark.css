@@ -1,0 +1,35 @@
+.theme-default.dark {
+  /* ========== 品牌主色调 ========== */
+  --brand-primary: #818cf8; /* 主色：靛蓝 */
+  --brand-secondary: #38bdf8; /* 次要色：天蓝 */
+  --brand-accent: #a78bfa; /* 强调色：紫色 */
+
+  /* ========== 亮色模式 (默认) ========== */
+  /* 背景与表面色 */
+  --bg-primary: #0f172a; /* 主背景 */
+  --bg-secondary: #1e293b; /* 次级背景/卡片 */
+  --bg-tertiary: #334155; /* 工具栏/三级背景 */
+  --bg-sidebar: #1e293b; /* 侧边栏背景 */
+
+  /* 文字颜色 */
+  --text-primary: #f1f5f9; /* 主要文字 */
+  --text-secondary: #cbd5e1; /* 次要文字 */
+  --text-tertiary: #94a3b8; /* 辅助文字 */
+  --text-inverse: #0f172a; /* 反色文字（深背景上） */
+
+  /* 边框与分割线 */
+  --border-light: #334155; /* 浅边框 */
+  --border-medium: #475569; /* 中边框 */
+  --border-heavy: #64748b; /* 深边框 */
+
+  /* 交互状态色 */
+  --link-normal: #60a5fa; /* 链接正常 */
+  --link-hover: #93c5fd; /* 链接悬停 */
+  --link-active: #bfdbfe; /* 链接激活 */
+
+  /* 功能状态色 */
+  --status-success: #34d399; /* 成功 */
+  --status-warning: #fbbf24; /* 警告 */
+  --status-error: #f87171; /* 错误 */
+  --status-info: #60a5fa; /* 信息 */
+}
