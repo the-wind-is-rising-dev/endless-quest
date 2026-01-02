@@ -70,20 +70,21 @@
   --line-height: 1.5;
   /* 字体大小 */
   --font-size-sm: 14px;
-  --font-size: 16px;
+  --font-size-md: 16px;
   --font-size-lg: 18px;
   --font-size-xl: 20px;
   --font-size-2xl: 24px;
   /* 字重 */
   --font-weight-light: 300;
-  --font-weight: 400;
-  --font-weight-bold: 700;
+  --font-weight-md: 400;
+  --font-weight-bold: 500;
   --font-weight-black: 900;
 
   /* 全局样式 */
   font-family: var(--font-family);
   line-height: var(--line-height);
-  font-weight: var(--font-weight);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-md);
 
   color: var(--text-primary);
   background-color: var(--bg-primary);

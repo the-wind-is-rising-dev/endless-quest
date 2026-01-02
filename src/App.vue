@@ -1,20 +1,48 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import {
   initializeTheme,
   addDarkListener,
   removeDarkListener,
 } from "./themes/theme.ts";
 import Theme from "./themes/Theme.vue";
+import router, { routes } from "./router/index.ts";
 
-const selectedTopItem = ref<string[]>(["1"]);
-const selectedSiderItem = ref<string[]>(["1"]);
-const openKeys = ref<string[]>(["sub1"]);
+const toolList = ref<any[]>(routes);
+const selectedTool = ref<string[]>([]);
+const subToolList = ref<any[]>(routes[0].children);
+const selectedSubTool = ref<string[]>([]);
+
+// 选择工具
+function onSelectTool(tool: any) {
+  if (selectedTool.value.includes(tool.path)) return;
+  selectedTool.value = [tool.path];
+  router.push(tool.path);
+}
+
+// 选择子工具
+function onSelectSubTool(subTool: any) {
+  if (selectedSubTool.value.includes(subTool.path)) return;
+  selectedSubTool.value = [subTool.path];
+  router.push(`${selectedTool.value[0]}/${subTool.path}`);
+}
 
 function initialize() {
-  console.log("App initialized");
   // 初始化主题样式
   initializeTheme();
+  // 监听路由变化，选择当前工具
+  watch(
+    () => router.currentRoute.value.path,
+    (n, _o) => {
+      const pathList = n.split("/").filter((item) => item !== "");
+      if (pathList.length <= 0) return;
+      selectedTool.value = [`/${pathList[0]}`];
+      subToolList.value =
+        toolList.value.find((item) => item.path === selectedTool.value[0])
+          ?.children || [];
+      selectedSubTool.value = pathList.length < 2 ? [] : [`${pathList[1]}`];
+    }
+  );
 }
 initialize();
 // 组件生命周期钩子
@@ -30,64 +58,134 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="app-layout column">
-    <div class="header row">
+  <div class="app-root column">
+    <div class="app-header row">
       <div class="logo" />
-      <a-menu
-        v-model:selectedKeys="selectedTopItem"
-        theme="dark"
-        mode="horizontal"
-      >
-        <a-menu-item key="1">nav 1</a-menu-item>
-      </a-menu>
-      <Theme style="margin-left: auto" />
-    </div>
-    <div style="height: 3px; background: var(--border-light)" />
-    <div class="row auto-fill">
-      <div style="width: 200px">
-        <a-menu
-          v-model:selectedKeys="selectedSiderItem"
-          v-model:openKeys="openKeys"
-          mode="inline"
-          :style="{
-            height: '100%',
-            borderRight: 0,
-            background: 'var(--bg-sidebar)',
-          }"
+      <div class="toolbar row center auto-fill">
+        <div
+          :class="`item center ${
+            selectedTool.includes(tool.path) ? 'selected' : ''
+          }`"
+          v-for="tool in toolList"
+          :key="tool.path"
+          @click="onSelectTool(tool)"
         >
-          <a-sub-menu key="sub1">
-            <template #title>
-              <span>
-                <user-outlined />
-                subnav 1
-              </span>
-            </template>
-            <a-menu-item key="1">option1</a-menu-item>
-            <a-menu-item key="2">option2</a-menu-item>
-            <a-menu-item key="3">option3</a-menu-item>
-            <a-menu-item key="4">option4</a-menu-item>
-          </a-sub-menu>
-        </a-menu>
+          {{ tool.title }}
+        </div>
       </div>
-      <div class="auto-fill column" style="padding: 0 24px 24px">
-        <div style="height: 10000px; flex-shrink: 0"></div>
+      <Theme />
+    </div>
+    <div class="row auto-fill">
+      <div class="siderbar">
+        <div style="margin-top: var(--space-2xl)">
+          <div
+            :class="`item ${
+              selectedSubTool.includes(subTool.path) ? 'selected' : ''
+            }`"
+            v-for="subTool in subToolList"
+            :key="subTool.path"
+            @click="onSelectSubTool(subTool)"
+          >
+            {{ subTool.title }}
+          </div>
+        </div>
+      </div>
+      <div class="auto-fill column">
+        <div style="background: var(--bg-sidebar)">
+          <div
+            style="
+              width: 100%;
+              height: var(--space-lg);
+              margin-top: var(--space-2xl);
+              background: var(--bg-primary);
+              border-top-left-radius: var(--space-2xl);
+            "
+          />
+        </div>
+        <div class="auto-fill" style="margin: 0 var(--space-lg)">
+          <router-view></router-view>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.app-layout {
+.app-root {
   width: 100%;
   min-height: 100vh;
   background: var(--bg-primary);
 }
-.header {
+.app-header {
   height: 64px;
   padding: 0 24px;
   background: var(--bg-tertiary);
   .logo {
     width: 220px;
+  }
+}
+.toolbar {
+  padding: var(--space-md);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  user-select: none;
+
+  .item {
+    margin: var(--space-lg);
+    padding: var(--space-xs) var(--space-sm);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+
+    &:hover {
+      background: var(--brand-secondary);
+      color: var(--text-inverse);
+    }
+
+    &:active {
+      background: var(--brand-primary);
+      color: var(--text-inverse);
+    }
+
+    &.selected {
+      background: var(--brand-primary);
+      color: var(--text-inverse);
+
+      &:hover {
+        background: var(--brand-primary);
+      }
+    }
+  }
+}
+
+.siderbar {
+  width: 160px;
+  background: var(--bg-sidebar);
+  user-select: none;
+
+  .item {
+    margin: var(--space-sm) var(--space-sm) 0 var(--space-sm);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--brand-secondary);
+      color: var(--text-inverse);
+    }
+
+    &.active {
+      background: var(--brand-accent);
+      color: var(--text-inverse);
+    }
+
+    &.selected {
+      background: var(--brand-accent);
+      color: var(--text-inverse);
+
+      &:hover {
+        background: var(--brand-accent);
+      }
+    }
   }
 }
 </style>
