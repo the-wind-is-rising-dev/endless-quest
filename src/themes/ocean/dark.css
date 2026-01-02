@@ -1,0 +1,42 @@
+html.theme-ocean.dark {
+  /* ========== 品牌主色调 ========== */
+  --brand-primary: #22d3ee; /* 荧光海蓝 */
+  --brand-secondary: #60a5fa; /* 夜海蓝 */
+  --brand-accent: #38bdf8; /* 深海发光蓝 */
+
+  /* ========== 暗色模式 ========== */
+  /* 背景与表面色 */
+  --bg-primary: #0f172a; /* 深夜海 */
+  --bg-secondary: #1e293b; /* 深海蓝 */
+  --bg-tertiary: #334155; /* 深海灰 */
+  --bg-sidebar: #1e3a8a; /* 暗海蓝 */
+
+  /* 文字颜色 */
+  --text-primary: #e0f2fe; /* 月光白 */
+  --text-secondary: #bae6fd; /* 浅海光 */
+  --text-tertiary: #7dd3fc; /* 海光蓝 */
+  --text-inverse: #0f172a; /* 反色文字 */
+
+  /* 边框与分割线 */
+  --border-light: #1e3a8a; /* 深海蓝边框 */
+  --border-medium: #1d4ed8; /* 海洋蓝边框 */
+  --border-heavy: #3b82f6; /* 亮海蓝边框 */
+
+  /* 交互状态色 */
+  --link-normal: #60a5fa; /* 链接正常 */
+  --link-hover: #93c5fd; /* 链接悬停 */
+  --link-active: #bfdbfe; /* 链接激活 */
+
+  /* 功能状态色 */
+  --status-success: #34d399; /* 夜光绿 */
+  --status-warning: #fbbf24; /* 夜光橙 */
+  --status-error: #f87171; /* 珊瑚红 */
+  --status-info: #60a5fa; /* 夜光蓝 */
+
+  /* 海洋元素扩展 */
+  --ocean-deep: #1e3a8a; /* 暗海深蓝 */
+  --ocean-surface: #3b82f6; /* 海面月光蓝 */
+  --ocean-foam: #a5f3fc; /* 夜浪白 */
+  --sand: #fef3c7; /* 月光沙滩 */
+  --seashell: #fdf2f8; /* 夜光贝壳 */
+}

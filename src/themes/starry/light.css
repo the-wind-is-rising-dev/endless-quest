@@ -1,0 +1,42 @@
+html.theme-starry {
+  /* ========== 品牌主色调 ========== */
+  --brand-primary: #8b5cf6; /* 星空紫 */
+  --brand-secondary: #a855f7; /* 星云紫 */
+  --brand-accent: #d946ef; /* 星辉粉紫 */
+
+  /* ========== 亮色模式 ========== */
+  /* 背景与表面色 */
+  --bg-primary: #faf5ff; /* 淡紫背景 */
+  --bg-secondary: #ffffff; /* 星光白 */
+  --bg-tertiary: #f3e8ff; /* 淡紫工具栏 */
+  --bg-sidebar: #e9d5ff; /* 浅紫侧边栏 */
+
+  /* 文字颜色 */
+  --text-primary: #4c1d95; /* 深空紫 */
+  --text-secondary: #6d28d9; /* 星空紫 */
+  --text-tertiary: #8b5cf6; /* 星云紫 */
+  --text-inverse: #ffffff; /* 反色文字 */
+
+  /* 边框与分割线 */
+  --border-light: #e9d5ff; /* 浅紫边框 */
+  --border-medium: #d8b4fe; /* 中紫边框 */
+  --border-heavy: #a855f7; /* 星空紫边框 */
+
+  /* 交互状态色 */
+  --link-normal: #7c3aed; /* 链接正常 */
+  --link-hover: #6d28d9; /* 链接悬停 */
+  --link-active: #4c1d95; /* 链接激活 */
+
+  /* 功能状态色 */
+  --status-success: #10b981; /* 星尘绿 */
+  --status-warning: #f59e0b; /* 流星橙 */
+  --status-error: #ef4444; /* 超新星红 */
+  --status-info: #3b82f6; /* 星云蓝 */
+
+  /* 星空元素扩展 */
+  --star-yellow: #fbbf24; /* 恒星黄 */
+  --nebula-blue: #0ea5e9; /* 星云蓝 */
+  --constellation: #8b5cf6; /* 星座紫 */
+  --moonlight: #f8fafc; /* 月光白 */
+  --twilight: #f1f5f9; /* 暮光灰 */
+}

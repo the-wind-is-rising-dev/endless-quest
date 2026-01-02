@@ -2,21 +2,22 @@
 const THEME_STORAGE_KEY = "custom-theme";
 
 // 主题
-interface Theme {
+export interface Theme {
   name: string; // 主题名称
   className: string; // 对应的 CSS 类名
 }
 
 // 模式
-interface ThemeModel {
+export interface ThemeModel {
   name: string; // 模式名称
-  value: "auto" | "light" | "dark"; // 模式值
+  followSystem: boolean; // 是否跟随系统
+  value: "light" | "dark"; // 模式值
 }
 
 // 主题配置
-interface ThemeConfig {
+export interface ThemeConfig {
   theme: Theme; // 主题
-  model: string; // 默认主题模式
+  model: ThemeModel; // 默认主题模式
 }
 
 /**
@@ -26,16 +27,6 @@ function isDarkMode() {
   return (
     window.matchMedia &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-}
-
-/**
- * 检测当前系统是否启用亮色模式
- */
-function isLightMode() {
-  return (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: light)").matches
   );
 }
 
@@ -50,14 +41,14 @@ function applyTheme(themeConfig: ThemeConfig) {
   // 移除旧的主题类
   const classes = document.documentElement.className.split(" ");
   const themeClasses = classes.filter(
-    (c) => !c.startsWith("theme-") && c !== "dark-mode"
+    (c) => !c.includes("theme-") && c !== "dark"
   );
   document.documentElement.className = themeClasses.join(" ");
 
   // 添加新的主题类
   document.documentElement.classList.add(className);
   // 判断是否启用暗黑模式
-  if (mode === "dark" || (mode === "auto" && isDarkMode())) {
+  if (mode.value === "dark") {
     document.documentElement.classList.add("dark");
   }
 
@@ -71,6 +62,10 @@ function applyTheme(themeConfig: ThemeConfig) {
 export function initializeTheme() {
   // 获取当前主题配置并应用
   const themeConfig = getCurrentThemeConfig();
+  // 初始化当前主题类型
+  if (themeConfig.model.followSystem) {
+    themeConfig.model.value = isDarkMode() ? "dark" : "light";
+  }
   applyTheme(themeConfig);
 }
 
@@ -84,7 +79,11 @@ export function getCurrentThemeConfig(): ThemeConfig {
     ? JSON.parse(theme)
     : {
         theme: getThemeList()[0], // 默认主题
-        model: getThemeModeList()[0].value,
+        model: {
+          name: "跟随系统",
+          followSystem: true,
+          value: isDarkMode() ? "dark" : "light",
+        },
       };
 }
 
@@ -97,13 +96,8 @@ export function addDarkListener() {
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", (e) => {
       const themeConfig = getCurrentThemeConfig();
-      if (e.matches) {
-        themeConfig.model == "auto" &&
-          document.documentElement.classList.add("dark");
-      } else {
-        themeConfig.model == "auto" &&
-          document.documentElement.classList.remove("dark");
-      }
+      if (!themeConfig.model.followSystem) return;
+      changeThemeMode(themeConfig.model);
     });
 }
 
@@ -122,7 +116,10 @@ export function removeDarkListener() {
  */
 export function changeThemeMode(themeModel: ThemeModel) {
   const themeConfig = getCurrentThemeConfig();
-  themeConfig.model = themeModel.value;
+  themeConfig.model = themeModel;
+  if (themeModel.followSystem) {
+    themeConfig.model.value = isDarkMode() ? "dark" : "light";
+  }
   applyTheme(themeConfig);
 }
 
@@ -148,32 +145,11 @@ export function getThemeList(): Theme[] {
     },
     {
       name: "星空",
-      className: "theme-star",
+      className: "theme-starry",
     },
     {
       name: "海洋",
       className: "theme-ocean",
-    },
-  ];
-}
-
-/**
- * 获取主题模式列表
- * @returns 主题模式列表
- */
-export function getThemeModeList(): ThemeModel[] {
-  return [
-    {
-      name: "自动",
-      value: "auto",
-    },
-    {
-      name: "亮色",
-      value: "light",
-    },
-    {
-      name: "暗黑",
-      value: "dark",
     },
   ];
 }

@@ -1,4 +1,4 @@
-.theme-default.dark {
+html.theme-default.dark {
   /* ========== 品牌主色调 ========== */
   --brand-primary: #818cf8; /* 主色：靛蓝 */
   --brand-secondary: #38bdf8; /* 次要色：天蓝 */

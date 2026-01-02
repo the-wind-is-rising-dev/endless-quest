@@ -1,0 +1,42 @@
+html.theme-ocean {
+  /* ========== 品牌主色调 ========== */
+  --brand-primary: #06b6d4; /* 海洋蓝 */
+  --brand-secondary: #3b82f6; /* 天蓝 */
+  --brand-accent: #0ea5e9; /* 湛蓝 */
+
+  /* ========== 亮色模式 ========== */
+  /* 背景与表面色 */
+  --bg-primary: #f0f9ff; /* 浅海蓝背景 */
+  --bg-secondary: #ffffff; /* 浪花白 */
+  --bg-tertiary: #e0f2fe; /* 浅蓝工具栏 */
+  --bg-sidebar: #bae6fd; /* 浅侧边栏 */
+
+  /* 文字颜色 */
+  --text-primary: #0c4a6e; /* 深海蓝 */
+  --text-secondary: #0369a1; /* 海洋蓝 */
+  --text-tertiary: #0ea5e9; /* 浅海洋蓝 */
+  --text-inverse: #ffffff; /* 反色文字 */
+
+  /* 边框与分割线 */
+  --border-light: #bae6fd; /* 浅海蓝边框 */
+  --border-medium: #7dd3fc; /* 中海蓝边框 */
+  --border-heavy: #0ea5e9; /* 海洋蓝边框 */
+
+  /* 交互状态色 */
+  --link-normal: #0284c7; /* 链接正常 */
+  --link-hover: #0369a1; /* 链接悬停 */
+  --link-active: #0c4a6e; /* 链接激活 */
+
+  /* 功能状态色 */
+  --status-success: #10b981; /* 海草绿 */
+  --status-warning: #f59e0b; /* 珊瑚橙 */
+  --status-error: #ef4444; /* 海星红 */
+  --status-info: #3b82f6; /* 信息蓝 */
+
+  /* 海洋元素扩展 */
+  --ocean-deep: #0c4a6e; /* 深海色 */
+  --ocean-surface: #38bdf8; /* 海面色 */
+  --ocean-foam: #a5f3fc; /* 浪花色 */
+  --sand: #fef3c7; /* 沙滩色 */
+  --seashell: #fdf2f8; /* 贝壳色 */
+}

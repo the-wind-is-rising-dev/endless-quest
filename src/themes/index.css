@@ -1,12 +1,12 @@
 /* 默认主题 */
-@import "./themes/default/dark.css";
-@import "./themes/default/light.css";
+@import "./default/dark.css";
+@import "./default/light.css";
 /* 星空主题 */
-@import "./themes/star/dark.css";
-@import "./themes/star/light.css";
+@import "./starry/dark.css";
+@import "./starry/light.css";
 /* 海洋主题 */
-@import "./themes/ocean/dark.css";
-@import "./themes/ocean/light.css";
+@import "./ocean/dark.css";
+@import "./ocean/light.css";
 
 /* 全局样式与变量定义 */
 :root {
@@ -43,7 +43,6 @@
   --status-warning: #f59e0b; /* 警告 */
   --status-error: #ef4444; /* 错误 */
   --status-info: #3b82f6; /* 信息 */
-
   /* 圆角大小 */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -65,8 +64,9 @@
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* 排版 */
+  /* 字体 */
   --font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* 行高 */
   --line-height: 1.5;
   /* 字体大小 */
   --font-size-sm: 14px;
