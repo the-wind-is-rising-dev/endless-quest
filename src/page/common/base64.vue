@@ -90,7 +90,7 @@ function onSplitCodemirror(index: number) {
       </div>
       <div class="row" style="margin: var(--space-md) 0">
         <a-button type="primary" ghost @click="onEncodeContent(index)">
-          编码
+          Base64 编码
         </a-button>
         <a-button
           type="primary"
@@ -98,7 +98,7 @@ function onSplitCodemirror(index: number) {
           style="margin-left: var(--space-sm)"
           @click="onDecodeContent(index)"
         >
-          解码
+          Base64 解码
         </a-button>
         <a-radio
           class="center"
