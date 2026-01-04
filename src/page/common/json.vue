@@ -138,7 +138,7 @@ function onSplitCodemirror(index: number) {
       class="codemirror-container column auto-fill"
     >
       <!-- 操作栏 -->
-      <div class="row" style="margin: var(--space-sm) 0">
+      <div class="row" style="margin-bottom: var(--space-sm)">
         <a-button @click="onExpandContent(index)">
           <ExpandOutlined />
         </a-button>
