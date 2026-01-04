@@ -37,9 +37,6 @@ const theme = EditorView.theme({
   ".cm-content": { fontFamily: "Monaco, Consolas, monospace" },
   ".cm-gutters": { background: "var(--bg-tertiary)" },
 });
-const extensions = [json(), jsonLinter, theme];
-// 配置项列表
-const extensionsList = ref<any[]>([extensions]);
 // 转义字符
 const isConvertEscapesList = ref<boolean[]>([true]);
 
@@ -119,14 +116,18 @@ function onConvertEscapes(index: number) {
 // 合并一个代码编辑器
 function onCompressCodemirror(index: number) {
   contentList.value.splice(index, 1);
-  extensionsList.value.splice(index, 1, extensions);
+  isConvertEscapesList.value.splice(index, 1);
   message.warning("删除成功");
 }
 
 // 拆分一个代码编辑器出了
 function onSplitCodemirror(index: number) {
   contentList.value.splice(index + 1, 0, "");
-  extensionsList.value.splice(index + 1, 0, extensions);
+  isConvertEscapesList.value.splice(
+    index + 1,
+    0,
+    isConvertEscapesList.value[index]
+  );
   message.success("拆分成功");
 }
 </script>
@@ -189,7 +190,7 @@ function onSplitCodemirror(index: number) {
           :autofocus="true"
           :indent-with-tab="true"
           :tab-size="2"
-          :extensions="extensionsList[index]"
+          :extensions="[json(), jsonLinter, theme]"
         />
       </div>
     </div>
