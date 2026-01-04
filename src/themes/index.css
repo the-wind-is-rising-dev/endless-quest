@@ -142,6 +142,17 @@
       color: var(--text-inverse);
       opacity: 0.85;
     }
+    &.ant-btn-background-ghost {
+      color: var(--brand-primary);
+      background-color: transparent;
+      border-color: var(--brand-primary);
+      &:hover {
+        color: var(--brand-primary);
+        background-color: transparent;
+        border-color: var(--brand-primary);
+        opacity: 0.7;
+      }
+    }
   }
   .ant-radio-wrapper {
     color: var(--text-primary);

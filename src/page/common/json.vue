@@ -140,10 +140,12 @@ function onSplitCodemirror(index: number) {
     >
       <!-- 操作栏 -->
       <div class="row" style="margin-bottom: var(--space-sm)">
-        <a-button @click="onExpandContent(index)">
+        <a-button type="primary" ghost @click="onExpandContent(index)">
           <ExpandOutlined />
         </a-button>
         <a-button
+          type="primary"
+          ghost
           style="margin-left: var(--space-xs)"
           @click="onCompressContent(index)"
         >
