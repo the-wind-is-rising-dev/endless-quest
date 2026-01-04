@@ -184,7 +184,7 @@ function onSplitCodemirror(index: number) {
         </a-button>
       </div>
       <!-- 编辑展示栏 -->
-      <div class="auto-fill" style="border: 1px solid var(--border-heavy)">
+      <div class="auto-fill" style="border: 1px solid var(--border-medium)">
         <codemirror
           v-model="contentList[index]"
           style="width: 100%; height: 100%"
