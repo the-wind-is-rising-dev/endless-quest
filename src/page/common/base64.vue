@@ -6,7 +6,7 @@ import { Base64 } from "js-base64";
 
 // 内容列表
 const inputList = ref<string[]>([""]);
-const outputList = ref<string[]>(["asdfkaslfdjslk"]);
+const outputList = ref<string[]>([""]);
 // 是否解码错误
 const isDecodeError = ref(false);
 // 是否去除空格
@@ -85,7 +85,7 @@ function onSplitCodemirror(index: number) {
         <a-textarea
           v-model:value="inputList[index]"
           style="height: 100%"
-          placeholder="输入任意内容进行编码，或输入密文进行解码"
+          placeholder="输入任意内容进行 Base64 编码，或输入 Base64 编码进行解码"
         />
       </div>
       <div class="row" style="margin: var(--space-md) 0">
@@ -133,7 +133,7 @@ function onSplitCodemirror(index: number) {
           :style="`height: 100%;border-color: ${
             isDecodeError ? 'var(--status-error)' : ''
           }`"
-          placeholder="此处显示编码或解码结果"
+          placeholder="此处显示 Base64 编码或 Base64 解码结果"
           readonly
         />
       </div>
