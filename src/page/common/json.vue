@@ -43,7 +43,6 @@ const isConvertEscapesList = ref<boolean[]>([true]);
 /**
  * 处理 JSON 转义字符
  * @param jsonString - 原始 JSON 字符串
- * @param options - 配置选项
  * @returns 处理后的字符串
  */
 function handleJsonEscapes(jsonString: string): string {
@@ -192,7 +191,7 @@ function onSplitCodemirror(index: number) {
           :autofocus="true"
           :indent-with-tab="true"
           :tab-size="2"
-          :extensions="[json(), jsonLinter, theme]"
+          :extensions="[json(), jsonLinter, theme, EditorView.lineWrapping]"
         />
       </div>
     </div>
