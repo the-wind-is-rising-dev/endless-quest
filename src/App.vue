@@ -102,7 +102,7 @@ onUnmounted(() => {
             "
           />
         </div>
-        <div class="auto-fill" style="margin: 0 var(--space-lg)">
+        <div class="auto-fill" style="margin-left: var(--space-lg)">
           <router-view></router-view>
         </div>
       </div>

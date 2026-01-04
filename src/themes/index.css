@@ -112,6 +112,96 @@
   a:active {
     color: var(--link-active);
   }
+
+  /* antd 布局 */
+  /* antd 默认按钮 */
+  .ant-btn-default {
+    background: var(--bg-secondary);
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+    &:hover {
+      color: var(--brand-primary);
+      border-color: var(--brand-primary);
+    }
+    &:active {
+      color: var(--brand-primary);
+      border-color: var(--brand-primary);
+    }
+  }
+  /* antd 主按钮 */
+  .ant-btn-primary {
+    background: var(--brand-primary);
+    color: var(--text-inverse);
+    &:hover {
+      background: var(--brand-primary);
+      color: var(--text-inverse);
+      opacity: 0.85;
+    }
+    &:active {
+      background: var(--brand-primary);
+      color: var(--text-inverse);
+      opacity: 0.85;
+    }
+  }
+  .ant-radio-wrapper {
+    color: var(--text-primary);
+    .ant-radio-checked {
+      .ant-radio-inner {
+        border-color: var(--brand-primary);
+        background-color: var(--brand-primary);
+      }
+    }
+    &:hover {
+      .ant-radio-inner {
+        border-color: var(--brand-primary);
+      }
+    }
+  }
+  /* antd 消息弹窗 */
+  .ant-message-notice-content {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    .ant-message-success {
+      .anticon {
+        color: var(--status-success);
+      }
+    }
+    .ant-message-error {
+      .anticon {
+        color: var(--status-error);
+      }
+    }
+    .ant-message-warning {
+      .anticon {
+        color: var(--status-warning);
+      }
+    }
+    .ant-message-info {
+      .anticon {
+        color: var(--status-info);
+      }
+    }
+  }
+
+  /* antd 确认弹窗 */
+  .ant-popconfirm {
+    .ant-popover-arrow {
+      &::before {
+        background: var(--bg-secondary);
+      }
+    }
+    .ant-popover-inner {
+      background: var(--bg-secondary);
+    }
+    .ant-popconfirm-message-icon {
+      .anticon {
+        color: var(--status-warning);
+      }
+    }
+    .ant-popconfirm-message {
+      color: var(--text-primary);
+    }
+  }
 }
 
 body {

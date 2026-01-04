@@ -16,7 +16,7 @@ watch(
 </script>
 
 <template>
-  <div v-if="isDisplayAllTools">Naming</div>
+  <div v-if="isDisplayAllTools">宝宝起名</div>
   <router-view v-else></router-view>
 </template>
 
