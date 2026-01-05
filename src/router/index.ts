@@ -89,7 +89,7 @@ export const routes = [
 ];
 
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory("/endless-quest/"),
   routes,
 });
 
