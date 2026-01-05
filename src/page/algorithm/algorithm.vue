@@ -56,7 +56,7 @@ initialize();
 .func-card {
   margin-right: var(--space-lg);
   margin-bottom: var(--space-lg);
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
   background: var(--bg-secondary);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);

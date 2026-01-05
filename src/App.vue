@@ -7,11 +7,17 @@ import {
 } from "./themes/theme.ts";
 import Theme from "./themes/Theme.vue";
 import router, { routes } from "./router/index.ts";
+import DateUtils from "./utils/DateUtils.ts";
 
 const toolList = ref<any[]>(routes);
 const selectedTool = ref<string[]>([]);
 const subToolList = ref<any[]>(routes[0].children);
 const selectedSubTool = ref<string[]>([]);
+
+const currentDatetime = ref<string>(
+  DateUtils.formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss")
+);
+const interval = ref<any>(null);
 
 // 选择工具
 function onSelectTool(tool: any) {
@@ -50,17 +56,26 @@ onMounted(() => {
   initialize();
   // 添加暗黑模式监听器
   addDarkListener();
+  interval.value = setInterval(() => {
+    currentDatetime.value = DateUtils.formatDateTime(
+      new Date(),
+      "yyyy-MM-dd hh:mm:ss"
+    );
+  }, 200);
 });
 onUnmounted(() => {
   // 移除暗黑模式监听器
   removeDarkListener();
+  if (interval.value) {
+    clearInterval(interval.value);
+  }
 });
 </script>
 
 <template>
   <div class="app-root column">
     <div class="app-header row">
-      <div class="logo" />
+      <div class="logo column-center">{{ currentDatetime }}</div>
       <div class="toolbar row center auto-fill">
         <div
           :class="`item center ${
@@ -118,10 +133,12 @@ onUnmounted(() => {
 }
 .app-header {
   height: 64px;
-  padding: 0 24px;
+  padding: 0 var(--space-lg);
   background: var(--bg-tertiary);
   .logo {
-    width: 220px;
+    color: var(--brand-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
   }
 }
 .toolbar {
@@ -163,7 +180,7 @@ onUnmounted(() => {
   user-select: none;
 
   .item {
-    margin: var(--space-sm) var(--space-sm) 0 var(--space-sm);
+    margin: var(--space-sm) var(--space-md) 0 var(--space-md);
     padding: var(--space-sm);
     border-radius: var(--radius-sm);
     cursor: pointer;

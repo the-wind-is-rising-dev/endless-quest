@@ -6,6 +6,23 @@
 
 endless-quest 是一个基于 Vue 3 + Vite 开发的多功能在线工具站，提供多种实用工具，方便用户在日常工作和生活中使用。项目目前处于完善阶段，更多功能将在未来持续添加。
 
+## 部署状态
+
+### GitHub Pages
+
+[![GitHub Pages Deploy](https://github.com/the-wind-is-rising-dev/endless-quest/actions/workflows/deploy.yml/badge.svg)](https://github.com/the-wind-is-rising-dev/endless-quest/actions/workflows/deploy.yml)
+
+**访问地址**：
+
+- [https://the-wind-is-rising-dev.github.io/endless-quest/](https://the-wind-is-rising-dev.github.io/endless-quest/)
+
+**部署信息**：
+
+- 自动部署：推送到 `main` 分支时触发
+- 部署分支：`gh-pages`
+- 路由模式：哈希路由模式
+- 访问示例：`https://the-wind-is-rising-dev.github.io/endless-quest/#/common/json`
+
 ## 功能特点
 
 ### 🏷️ 常用工具
