@@ -35,22 +35,21 @@ function onSelectSubTool(subTool: any) {
   router.push(`${parentPath}/${subTool.path}`);
 }
 
+// 初始化选择工具
+function initSelectedTool(path: string) {
+  const pathList = path.split("/").filter((item) => item !== "");
+  if (pathList.length <= 0) return;
+  selectedTool.value = [`/${pathList[0]}`];
+  subToolList.value =
+    toolList.value.find((item) => item.path === selectedTool.value[0])
+      ?.children || [];
+  selectedSubTool.value = pathList.length < 2 ? [] : [`${pathList[1]}`];
+}
+
 function initialize() {
   // 初始化主题样式
   initializeTheme();
-  // 监听路由变化，选择当前工具
-  watch(
-    () => router.currentRoute.value.path,
-    (n, _o) => {
-      const pathList = n.split("/").filter((item) => item !== "");
-      if (pathList.length <= 0) return;
-      selectedTool.value = [`/${pathList[0]}`];
-      subToolList.value =
-        toolList.value.find((item) => item.path === selectedTool.value[0])
-          ?.children || [];
-      selectedSubTool.value = pathList.length < 2 ? [] : [`${pathList[1]}`];
-    }
-  );
+  initSelectedTool(router.currentRoute.value.path);
 }
 initialize();
 // 组件生命周期钩子
@@ -58,6 +57,14 @@ onMounted(() => {
   initialize();
   // 添加暗黑模式监听器
   addDarkListener();
+  // 监听路由变化，选择当前工具
+  watch(
+    () => router.currentRoute.value.path,
+    (n, _o) => {
+      initSelectedTool(n);
+    }
+  );
+  // 定时更新时间
   interval.value = setInterval(() => {
     currentDatetime.value = DateUtils.formatDateTime(
       new Date(),
