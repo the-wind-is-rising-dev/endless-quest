@@ -1,0 +1,94 @@
+name: Deploy Endless-Quest App to GitHub Pages
+
+# 触发条件
+on:
+  push:
+    branches: [main] # 只在 push 到 main 分支时部署
+  workflow_dispatch: # 允许手动触发
+
+# 环境变量
+env:
+  NODE_VERSION: "20" # 使用 LTS 版本，更稳定可靠
+  BASE_PATH: "/endless-quest/" # 统一管理部署路径
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 必须要有写入权限
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取所有历史记录
+
+      # 2. 设置 Node.js 环境
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm" # 缓存 npm 依赖
+
+      # 3. 缓存 node_modules 以提高构建速度
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 4. 安装依赖
+      - name: Install dependencies
+        run: npm ci # 使用 ci 而不是 install，保证依赖一致性
+
+      # 5. 构建项目
+      - name: Build with Vite
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      # 6. 处理单页应用路由问题（重要！）
+      - name: Fix SPA routing for GitHub Pages
+        run: |
+          # 创建 .nojekyll 文件，防止 GitHub Pages 忽略下划线开头的文件
+          touch dist/.nojekyll
+
+          # 复制 index.html 为 404.html，解决直接访问路由的 404 问题
+          cp dist/index.html dist/404.html
+
+      # 7. 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          # 自动生成的 token，无需额外配置
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+          # 构建输出目录
+          publish_dir: ./dist
+
+          # 部署到的分支（默认 gh-pages）
+          publish_branch: gh-pages
+
+          # 保持分支干净（删除旧文件）
+          force_orphan: true
+
+          # 提交信息
+          commit_message: "🚀 Deploy: ${{ github.event.head_commit.message || github.sha }}"
+
+          # 提交者信息
+          user_name: "github-actions[bot]"
+          user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # 8. 输出部署信息
+      - name: Output deployment info
+        run: |
+          echo "✅ 部署完成！"
+          echo "📦 仓库: ${{ github.repository }}"
+          echo "🔗 访问地址: https://${{ github.repository_owner }}.github.io${{ env.BASE_PATH }}"
+          echo "🌿 部署分支: gh-pages"
+          echo "🆔 提交哈希: ${{ github.sha }}"
