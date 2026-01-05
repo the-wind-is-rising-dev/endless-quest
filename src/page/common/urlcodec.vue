@@ -12,9 +12,9 @@ const isDecodeError = ref(false);
 const isTrimContentList = ref<boolean[]>([false]);
 
 function onEncodeContent(index: number) {
+  outputList.value.splice(index, 1, "");
   if (!inputList.value[index]) {
     message.warning("请输入内容");
-    outputList.value.splice(index, 1, "");
     return;
   }
   if (isTrimContentList.value[index]) {
@@ -26,9 +26,9 @@ function onEncodeContent(index: number) {
 }
 
 function onDecodeContent(index: number) {
+  outputList.value.splice(index, 1, "");
   if (!inputList.value[index]) {
     message.warning("请输入内容");
-    outputList.value.splice(index, 1, "");
     return;
   }
   if (isTrimContentList.value[index]) {
