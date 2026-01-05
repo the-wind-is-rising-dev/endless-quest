@@ -34,7 +34,7 @@ initialize();
 </script>
 
 <template>
-  <div v-if="isDisplayAllTools" class="fu nc-root row auto-fill">
+  <div v-if="isDisplayAllTools" class="func-root row auto-fill">
     <div
       class="func-card"
       v-for="(item, index) in cardList"
