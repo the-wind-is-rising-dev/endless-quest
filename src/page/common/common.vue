@@ -58,6 +58,7 @@ initialize();
   margin-bottom: var(--space-lg);
   padding: var(--space-md) var(--space-lg);
   background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   cursor: pointer;
@@ -65,10 +66,12 @@ initialize();
   flex-shrink: 0;
   &:hover {
     background: var(--brand-secondary);
+    border: 1px solid var(--brand-secondary);
     color: var(--text-inverse);
   }
   &:active {
     background: var(--brand-accent);
+    border: 1px solid var(--brand-accent);
     color: var(--text-inverse);
   }
 }
