@@ -38,7 +38,7 @@ const theme = EditorView.theme({
   ".cm-gutters": { background: "var(--bg-tertiary)" },
 });
 // 转义字符
-const isConvertEscapesList = ref<boolean[]>([true]);
+const isConvertEscapesList = ref<boolean[]>([false]);
 
 /**
  * 处理 JSON 转义字符
@@ -162,7 +162,7 @@ function onSplitCodemirror(index: number) {
           v-model:checked="isConvertEscapesList[index]"
           @click="onConvertEscapes(index)"
         >
-          自动转义字符
+          处理转义字符
         </a-radio>
         <div style="margin-left: auto" />
         <a-popconfirm

@@ -29,8 +29,10 @@ function onSelectTool(tool: any) {
 // 选择子工具
 function onSelectSubTool(subTool: any) {
   if (selectedSubTool.value.includes(subTool.path)) return;
+  const parentPath =
+    selectedTool.value.length > 0 ? selectedTool.value[0] : routes[0].path;
   selectedSubTool.value = [subTool.path];
-  router.push(`${selectedTool.value[0]}/${subTool.path}`);
+  router.push(`${parentPath}/${subTool.path}`);
 }
 
 function initialize() {
@@ -136,6 +138,7 @@ onUnmounted(() => {
   padding: 0 var(--space-lg);
   background: var(--bg-tertiary);
   .logo {
+    width: 200px;
     color: var(--brand-primary);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);

@@ -15,7 +15,6 @@ function onClickCard(item: any) {
 // 内容页面初始化
 function contentInitialize(path: string) {
   const pathList = path.split("/").filter((item) => item !== "");
-  if (pathList.length <= 0) return;
   isDisplayAllTools.value = pathList.length <= 1;
 }
 

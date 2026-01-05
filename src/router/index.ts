@@ -9,6 +9,7 @@ export const routes = [
   {
     path: "/common",
     name: "Common",
+    alias: "/",
     component: import("../page/common/common.vue"),
     title: "常用工具",
     children: [
