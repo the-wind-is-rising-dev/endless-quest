@@ -2,7 +2,7 @@
 import { message } from "ant-design-vue";
 import { ref } from "vue";
 import { MergeCellsOutlined, SplitCellsOutlined } from "@ant-design/icons-vue";
-import { md5 } from "js-md5";
+import CryptoJS from "crypto-js";
 
 // 内容列表
 const inputList = ref<string[]>([""]);
@@ -21,9 +21,11 @@ function onCalculate(index: number) {
   }
   const content: string = inputList.value[index];
 
-  const md5Builder = md5.create();
-  md5Builder.update(content);
-  const result: any = { hex: md5Builder.hex(), base64: md5Builder.base64() };
+  const wordArray = CryptoJS.MD5(content);
+  const result: any = {
+    hex: wordArray.toString(CryptoJS.enc.Hex),
+    base64: wordArray.toString(CryptoJS.enc.Base64),
+  };
   outputList.value.splice(index, 1, result);
   message.success("计算成功");
 }
