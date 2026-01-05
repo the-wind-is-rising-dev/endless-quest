@@ -105,30 +105,7 @@ export const router = createRouter({
  * 参考：https://juejin.cn/post/7106867857685741604
  */
 router.beforeEach((to, _from, next) => {
-  const pathList = to.path.split("/").filter((item) => item !== "");
-
-  // 跳转至常用工具页
-  if (pathList.length <= 0) {
-    next("/common");
-    return;
-  }
-  const path = `/${pathList[0]}`;
-  const route = routes.find((item) => item.path === path);
-  // 跳转至常用工具页
-  if (!route) {
-    next("/common");
-    return;
-  }
-  // 跳转至工具页
-  if (pathList.length >= 2) {
-    const child = route.children.find((item) => item.path === pathList[1]);
-    // 跳转至工具页
-    if (!child) {
-      next(path);
-      return;
-    }
-  }
-
+  console.log("to: ", to.path);
   next();
 });
 
