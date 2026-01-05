@@ -142,6 +142,12 @@
       color: var(--text-inverse);
       opacity: 0.85;
     }
+    &:disabled {
+      cursor: not-allowed;
+      border-color: #d9d9d9;
+      color: rgba(0, 0, 0, 0.25);
+      background-color: #d9d9d9;
+    }
     &.ant-btn-background-ghost {
       color: var(--brand-primary);
       background-color: transparent;
@@ -230,6 +236,117 @@
     }
     .ant-popconfirm-message {
       color: var(--text-primary);
+    }
+  }
+
+  /* antd 数值输入框 */
+  .ant-input-number-group-wrapper {
+    .ant-input-number-group-addon {
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+      border-top-left-radius: var(--radius-sm);
+      border-bottom-left-radius: var(--radius-sm);
+      background: var(--bg-tertiary);
+    }
+    .ant-input-number {
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+      border-top-right-radius: var(--radius-sm);
+      border-bottom-right-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      &:hover {
+        border-color: var(--brand-primary);
+      }
+    }
+    .ant-input-number-focused {
+      box-shadow: none;
+    }
+    .ant-input-number-input {
+      color: var(--text-primary);
+    }
+    .ant-input-number-handler-wrap {
+      background: var(--bg-secondary);
+      .ant-input-number-handler-up {
+        border-color: var(--border-medium);
+      }
+      .ant-input-number-handler-up-inner {
+        color: var(--text-primary);
+        &:hover {
+          color: var(--brand-primary);
+        }
+      }
+      .ant-input-number-handler-down {
+        border-color: var(--border-medium);
+      }
+      .ant-input-number-handler-down-inner {
+        color: var(--text-primary);
+        &:hover {
+          color: var(--brand-primary);
+        }
+      }
+    }
+  }
+  /* antd 日期选择器 */
+  .ant-picker {
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    .ant-picker-input {
+      input {
+        color: var(--text-primary);
+        &::placeholder {
+          color: var(--text-tertiary);
+        }
+      }
+    }
+    .ant-picker-suffix {
+      color: var(--text-tertiary);
+    }
+  }
+  .ant-picker-dropdown {
+    .ant-picker-header {
+      color: var(--text-primary);
+      button {
+        color: var(--text-tertiary);
+        &:hover {
+          color: var(--brand-primary);
+        }
+      }
+    }
+    .ant-picker-cell {
+      color: var(--text-tertiary);
+    }
+    .ant-picker-cell-in-view {
+      color: var(--text-primary);
+      &.ant-picker-cell-selected {
+        .ant-picker-cell-inner {
+          background: var(--brand-primary);
+          color: var(--text-inverse);
+        }
+      }
+      &.ant-picker-cell-today {
+        .ant-picker-cell-inner {
+          &::before {
+            border: 1px solid var(--brand-primary);
+          }
+        }
+      }
+    }
+    .ant-picker-time-panel-cell-inner {
+      color: var(--text-primary) !important;
+    }
+    .ant-picker-time-panel-cell-selected {
+      .ant-picker-time-panel-cell-inner {
+        background: var(--brand-primary) !important;
+        color: var(--text-inverse) !important;
+        opacity: 0.8;
+      }
+    }
+    color: var(--text-primary);
+    .ant-picker-panel-container {
+      background: var(--bg-secondary);
+      .ant-picker-now-btn {
+        color: var(--brand-primary);
+      }
     }
   }
 }
