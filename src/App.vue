@@ -99,9 +99,9 @@ onUnmounted(() => {
       </div>
       <Theme />
     </div>
-    <div class="row auto-fill">
+    <div class="app-content row auto-fill">
       <div class="siderbar">
-        <div style="margin-top: var(--space-2xl)">
+        <div style="margin-top: var(--space-xl)">
           <div
             :class="`item ${
               selectedSubTool.includes(subTool.path) ? 'selected' : ''
@@ -114,13 +114,13 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <div class="auto-fill column">
+      <div class="main-content auto-fill column">
         <div style="background: var(--bg-sidebar)">
           <div
             style="
               width: 100%;
               height: var(--space-lg);
-              margin-top: var(--space-2xl);
+              margin-top: var(--space-xl);
               background: var(--bg-primary);
               border-top-left-radius: var(--space-2xl);
             "
@@ -141,15 +141,23 @@ onUnmounted(() => {
   background: var(--bg-primary);
 }
 .app-header {
+  position: fixed; /* 固定定位 */
+  top: 0;
+  left: 0;
+  right: 0;
   height: 64px;
   padding: 0 var(--space-lg);
   background: var(--bg-tertiary);
+  z-index: 99999; /* 确保在最上层 */
   .logo {
     width: 200px;
     color: var(--brand-primary);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
   }
+}
+.app-content {
+  margin-top: 64px;
 }
 .toolbar {
   padding: var(--space-md);
@@ -185,8 +193,14 @@ onUnmounted(() => {
 }
 
 .siderbar {
+  position: fixed; /* 固定定位 */
+  top: 64px; /* 避开头部工具栏 */
+  left: 0;
+  bottom: 0;
   width: 160px;
   background: var(--bg-sidebar);
+  overflow-y: auto; /* 如果内容过多可以滚动 */
+  z-index: 999; /* 确保在内容层之上 */
   user-select: none;
 
   .item {
@@ -214,5 +228,9 @@ onUnmounted(() => {
       }
     }
   }
+}
+/* 内容区域需要考虑侧边栏宽度 */
+.main-content {
+  margin-left: 160px; /* 与侧边栏宽度相同 */
 }
 </style>

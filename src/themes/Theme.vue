@@ -63,7 +63,7 @@ onUnmounted(() => {
         <SettingOutlined />
       </div>
       <template #overlay>
-        <a-menu style="background: var(--bg-secondary)">
+        <a-menu>
           <div
             class="theme-item"
             v-for="theme in themeList"
@@ -82,7 +82,7 @@ onUnmounted(() => {
               <div>{{ theme.name }}-主题</div>
             </div>
           </div>
-          <div class="theme-model-item">
+          <div class="theme-model-item row">
             <a-radio
               v-model:checked="followSystem"
               @click="onFollowSystemChange()"

@@ -206,9 +206,15 @@
       }
     }
   }
-
+  .ant-dropdown {
+    z-index: 999999;
+    .ant-dropdown-menu {
+      background: var(--bg-secondary);
+    }
+  }
   /* antd 确认弹窗 */
   .ant-popconfirm {
+    z-index: 999999;
     .ant-popover-arrow {
       &::before {
         background: var(--bg-secondary);
