@@ -41,11 +41,11 @@ const theme = EditorView.theme({
 const isConvertEscapesList = ref<boolean[]>([true]);
 
 /**
- * 安全地处理 JSON 转义字符
+ * 处理 JSON 转义字符
  * @param jsonString - 原始 JSON 字符串
  * @returns 处理后的字符串
  */
-function safeHandleJsonEscapes(jsonString: string): string {
+function handleJsonEscapes(jsonString: string): string {
   // 使用正则表达式安全替换转义字符
   // 注意：这里需要按顺序处理，避免冲突
   return jsonString.replace(/\\(.)/g, (match, char) => {
@@ -72,37 +72,6 @@ function safeHandleJsonEscapes(jsonString: string): string {
   });
 }
 
-/**
- * 智能处理 JSON 字符串
- * @param jsonString - JSON 字符串
- * @param shouldHandleEscapes - 是否处理转义字符
- * @returns 处理后的 JSON 字符串
- */
-function processJsonString(
-  jsonString: string,
-  shouldHandleEscapes: boolean
-): string {
-  if (!shouldHandleEscapes) {
-    return jsonString;
-  }
-
-  try {
-    // 尝试直接解析
-    JSON.parse(jsonString);
-    return jsonString; // 如果成功，返回原字符串
-  } catch {
-    // 如果失败，尝试处理转义字符
-    try {
-      const processed = safeHandleJsonEscapes(jsonString);
-      JSON.parse(processed); // 验证处理后的字符串
-      return processed;
-    } catch {
-      message.error("无法解析的 JSON 字符串");
-      throw new Error("无法解析的 JSON 字符串");
-    }
-  }
-}
-
 // 展开/美化内容
 function onExpandContent(index: number) {
   if (contentList.value[index].length <= 0) {
@@ -110,15 +79,24 @@ function onExpandContent(index: number) {
     return;
   }
 
-  const content = processJsonString(
-    contentList.value[index],
-    isConvertEscapesList.value[index]
-  );
-  contentList.value.splice(
-    index,
-    1,
-    JSON.stringify(JSON.parse(content), null, 2)
-  );
+  let content = contentList.value[index];
+  try {
+    content = JSON.stringify(JSON.parse(content), null, 2);
+  } catch {
+    if (!isConvertEscapesList.value[index]) {
+      message.error("无法解析的 JSON 字符串");
+      throw new Error("无法解析的 JSON 字符串");
+    }
+    try {
+      content = handleJsonEscapes(content); // 验证处理后的字符串
+      content = JSON.stringify(JSON.parse(content), null, 2);
+    } catch {
+      message.error("无法解析的 JSON 字符串");
+      throw new Error("无法解析的 JSON 字符串");
+    }
+  }
+  contentList.value.splice(index, 1, content);
+  message.success("展开成功");
 }
 
 // 压缩内容
@@ -127,11 +105,23 @@ function onCompressContent(index: number) {
     message.warning("请输入内容");
     return;
   }
-  const content = processJsonString(
-    contentList.value[index],
-    isConvertEscapesList.value[index]
-  );
-  contentList.value.splice(index, 1, JSON.stringify(JSON.parse(content)));
+  let content = contentList.value[index];
+  try {
+    content = JSON.stringify(JSON.parse(content));
+  } catch {
+    if (!isConvertEscapesList.value[index]) {
+      message.error("无法解析的 JSON 字符串");
+      throw new Error("无法解析的 JSON 字符串");
+    }
+    try {
+      content = handleJsonEscapes(content); // 验证处理后的字符串
+      content = JSON.stringify(JSON.parse(content));
+    } catch {
+      message.error("无法解析的 JSON 字符串");
+      throw new Error("无法解析的 JSON 字符串");
+    }
+  }
+  contentList.value.splice(index, 1, content);
   message.success("压缩成功");
 }
 
