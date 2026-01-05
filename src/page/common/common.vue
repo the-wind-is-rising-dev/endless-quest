@@ -35,9 +35,9 @@ initialize();
 </script>
 
 <template>
-  <div v-if="isDisplayAllTools" class="common-root row auto-fill">
+  <div v-if="isDisplayAllTools" class="fu nc-root row auto-fill">
     <div
-      class="common-card"
+      class="func-card"
       v-for="(item, index) in cardList"
       :key="index"
       @click="onClickCard(item)"
@@ -49,11 +49,11 @@ initialize();
 </template>
 
 <style scoped lang="css">
-.common-root {
+.func-root {
   margin-right: var(--space-lg);
   flex-wrap: wrap;
 }
-.common-card {
+.func-card {
   margin-right: var(--space-lg);
   margin-bottom: var(--space-lg);
   padding: var(--space-md) var(--space-lg);
