@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from "vue-router";
 
 // 路由
 export const routes = [
@@ -89,7 +93,10 @@ export const routes = [
 ];
 
 export const router = createRouter({
-  history: createWebHistory("/endless-quest/"),
+  history:
+    process.env.NODE_ENV === "github-io"
+      ? createWebHashHistory("/endless-quest/")
+      : createWebHistory(),
   routes,
 });
 

@@ -50,7 +50,7 @@ jobs:
       - name: Build with Vite
         run: npm run build
         env:
-          NODE_ENV: production
+          NODE_ENV: github-io
 
       # 6. 处理单页应用路由问题（重要！）
       - name: Fix SPA routing for GitHub Pages
