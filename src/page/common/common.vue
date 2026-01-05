@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import router from "../../router";
+import { router, routes } from "../../router";
 
+const currentRouteIndex = 0;
 const isDisplayAllTools = ref<boolean>(true);
+const cardList = ref<any[]>([]);
+
+// 点击卡片
+function onClickCard(item: any) {
+  const path = `${routes[currentRouteIndex].path}/${item.path}`;
+  router.push(path);
+}
 
 // 内容页面初始化
 function contentInitialize(path: string) {
@@ -21,13 +29,47 @@ watch(
 function initialize() {
   console.log("initialize");
   contentInitialize(router.currentRoute.value.path);
+  cardList.value = routes[currentRouteIndex].children;
 }
 initialize();
 </script>
 
 <template>
-  <div v-if="isDisplayAllTools">Common</div>
+  <div v-if="isDisplayAllTools" class="common-root row auto-fill">
+    <div
+      class="common-card"
+      v-for="(item, index) in cardList"
+      :key="index"
+      @click="onClickCard(item)"
+    >
+      {{ item.title }}
+    </div>
+  </div>
   <router-view v-else></router-view>
 </template>
 
-<style scoped lang="css"></style>
+<style scoped lang="css">
+.common-root {
+  margin-right: var(--space-lg);
+  flex-wrap: wrap;
+}
+.common-card {
+  margin-right: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  &:hover {
+    background: var(--brand-secondary);
+    color: var(--text-inverse);
+  }
+  &:active {
+    background: var(--brand-accent);
+    color: var(--text-inverse);
+  }
+}
+</style>
