@@ -2,7 +2,7 @@
 import { json } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
 import { EditorView } from "codemirror";
-import { reactive, ref, shallowRef } from "vue";
+import { ref } from "vue";
 import { Codemirror } from "vue-codemirror"; // 注意组件名
 import {
   ExpandOutlined,
@@ -38,24 +38,69 @@ const theme = EditorView.theme({
   ".cm-gutters": { background: "var(--bg-tertiary)" },
 });
 // 转义字符
-const isConvertEscapesList = ref<boolean[]>([false]);
+const isConvertEscapesList = ref<boolean[]>([true]);
 
 /**
- * 处理 JSON 转义字符
+ * 安全地处理 JSON 转义字符
  * @param jsonString - 原始 JSON 字符串
  * @returns 处理后的字符串
  */
-function handleJsonEscapes(jsonString: string): string {
-  // 反转义常见字符
-  return jsonString
-    .replace(/\\"/g, '"') // \" -> "
-    .replace(/\\'/g, "'") // \' -> '
-    .replace(/\\\\/g, "\\") // \\ -> \
-    .replace(/\\n/g, "\n") // \n -> 换行符或空格
-    .replace(/\\r/g, "") // \r -> (移除)
-    .replace(/\\t/g, "\t") // \t -> 制表符
-    .replace(/\\b/g, "\b") // \b -> 退格符
-    .replace(/\\f/g, "\f"); // \f -> 换页符
+function safeHandleJsonEscapes(jsonString: string): string {
+  // 使用正则表达式安全替换转义字符
+  // 注意：这里需要按顺序处理，避免冲突
+  return jsonString.replace(/\\(.)/g, (match, char) => {
+    switch (char) {
+      case '"':
+        return '"';
+      case "'":
+        return "'";
+      case "\\":
+        return "\\";
+      case "n":
+        return "\n";
+      case "r":
+        return "\r";
+      case "t":
+        return "\t";
+      case "b":
+        return "\b";
+      case "f":
+        return "\f";
+      default:
+        return match; // 保留未知的转义序列
+    }
+  });
+}
+
+/**
+ * 智能处理 JSON 字符串
+ * @param jsonString - JSON 字符串
+ * @param shouldHandleEscapes - 是否处理转义字符
+ * @returns 处理后的 JSON 字符串
+ */
+function processJsonString(
+  jsonString: string,
+  shouldHandleEscapes: boolean
+): string {
+  if (!shouldHandleEscapes) {
+    return jsonString;
+  }
+
+  try {
+    // 尝试直接解析
+    JSON.parse(jsonString);
+    return jsonString; // 如果成功，返回原字符串
+  } catch {
+    // 如果失败，尝试处理转义字符
+    try {
+      const processed = safeHandleJsonEscapes(jsonString);
+      JSON.parse(processed); // 验证处理后的字符串
+      return processed;
+    } catch {
+      message.error("无法解析的 JSON 字符串");
+      throw new Error("无法解析的 JSON 字符串");
+    }
+  }
 }
 
 // 展开/美化内容
@@ -64,9 +109,11 @@ function onExpandContent(index: number) {
     message.warning("请输入内容");
     return;
   }
-  const content = isConvertEscapesList.value[index]
-    ? handleJsonEscapes(contentList.value[index])
-    : contentList.value[index];
+
+  const content = processJsonString(
+    contentList.value[index],
+    isConvertEscapesList.value[index]
+  );
   contentList.value.splice(
     index,
     1,
@@ -80,9 +127,10 @@ function onCompressContent(index: number) {
     message.warning("请输入内容");
     return;
   }
-  const content = isConvertEscapesList.value[index]
-    ? handleJsonEscapes(contentList.value[index])
-    : contentList.value[index];
+  const content = processJsonString(
+    contentList.value[index],
+    isConvertEscapesList.value[index]
+  );
   contentList.value.splice(index, 1, JSON.stringify(JSON.parse(content)));
   message.success("压缩成功");
 }
@@ -101,11 +149,6 @@ function onConvertEscapes(index: number) {
     !isConvertEscapesList.value[index]
   );
   if (isConvertEscapesList.value[index]) {
-    contentList.value.splice(
-      index,
-      1,
-      handleJsonEscapes(contentList.value[index])
-    );
     message.success("已开启转义字符");
   } else {
     message.warning("已关闭转义字符");
