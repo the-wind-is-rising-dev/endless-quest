@@ -3,8 +3,12 @@ import { onMounted, onUnmounted, ref } from "vue";
 import {
   DoubleRightOutlined,
   ClockCircleOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  CopyOutlined,
 } from "@ant-design/icons-vue";
 import DateUtils from "../../utils/DateUtils";
+import { message } from "ant-design-vue";
 
 const inputTimestamp = ref<number>();
 const timestampConverterResult = ref<any>({
@@ -35,6 +39,7 @@ function onTimestampConverter() {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     GMT: date.toString(),
   };
+  message.success("转换成功");
 }
 
 const inputDateTime = ref<string>("");
@@ -62,15 +67,23 @@ function onDateTimeConverter() {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     GMT: date.toString(),
   };
+  message.success("转换成功");
 }
 
 // 当前时间戳
 const currentTimestamp = ref<number>(DateUtils.timestamp());
 const interval = ref<any>();
+const isPaused = ref<boolean>(false);
+// 复制内容
+function onCopyContent(content: string) {
+  navigator.clipboard.writeText(content);
+  message.success("复制成功");
+}
 // 组件生命周期钩子
 onMounted(() => {
   // 定时更新时间
   interval.value = setInterval(() => {
+    if (isPaused.value) return;
     currentTimestamp.value = DateUtils.timestamp();
   }, 200);
 });
@@ -216,7 +229,26 @@ initialize();
               background: var(--border-medium);
             "
           />
-          <div class="row"></div>
+          <div class="row">
+            <a-button
+              type="primary"
+              size="large"
+              @click="onCopyContent((currentTimestamp / 1000).toString())"
+            >
+              <CopyOutlined /> 复制
+            </a-button>
+            <a-button
+              type="primary"
+              size="large"
+              ghost
+              @click="isPaused = !isPaused"
+              style="margin-left: var(--space-lg)"
+            >
+              <PlayCircleOutlined v-if="isPaused" />
+              <PauseCircleOutlined v-else />
+              {{ isPaused ? "开始" : "暂停" }}
+            </a-button>
+          </div>
           <div
             style="
               margin: var(--space-md) 0;

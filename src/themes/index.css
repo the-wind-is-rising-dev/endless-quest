@@ -187,7 +187,11 @@
       color: var(--text-tertiary);
     }
   }
+
   /* antd 消息弹窗 */
+  .ant-message {
+    z-index: 999999;
+  }
   .ant-message-notice-content {
     background: var(--bg-secondary);
     color: var(--text-primary);
@@ -212,6 +216,7 @@
       }
     }
   }
+  /* antd 下拉菜单 */
   .ant-dropdown {
     z-index: 999999;
     .ant-dropdown-menu {
