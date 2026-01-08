@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { json } from "@codemirror/lang-json";
-import { linter } from "@codemirror/lint";
+import { linter, lintGutter } from "@codemirror/lint";
 import { EditorView } from "codemirror";
 import { ref } from "vue";
 import { Codemirror } from "vue-codemirror"; // 注意组件名
@@ -16,18 +16,49 @@ import { message } from "ant-design-vue";
 // JSON 语法检查器
 const jsonLinter = linter((view: EditorView) => {
   const diagnostics: any[] = [];
+  const doc = view.state.doc.toString();
+
+  if (!doc.trim()) return diagnostics;
+
   try {
-    JSON.parse(view.state.doc.toString());
+    JSON.parse(doc);
   } catch (e: any) {
+    // 尝试更精确地定位错误位置
+    const errorPos = locateJsonError(doc, e.message);
+
     diagnostics.push({
-      from: 0,
-      to: view.state.doc.length,
+      from: errorPos?.from ? errorPos.from : 0,
+      to: errorPos?.to ? errorPos.to : doc.length,
       severity: "error",
       message: e.message,
     });
   }
+
   return diagnostics;
 });
+
+/**
+ * 定位 JSON 错误的具体位置
+ * @param jsonString - JSON 字符串
+ * @param errorMessage - 错误消息
+ * @returns 错误位置对象
+ */
+function locateJsonError(jsonString: string, errorMessage: string) {
+  // 尝试从错误消息中解析位置
+  const posMatch = errorMessage.match(/position\s*(\d+)/i);
+  // const lineMatch = errorMessage.match(/line\s*(\d+)/i);
+
+  if (posMatch) {
+    const pos = parseInt(posMatch[1]) - 1; // 位置通常从1开始计数
+    const clampedPos = Math.max(0, Math.min(pos, jsonString.length - 1));
+    return {
+      from: clampedPos,
+      to: clampedPos + 1,
+    };
+  }
+
+  return null;
+}
 
 // 内容列表
 const contentList = ref<string[]>([""]);
@@ -224,7 +255,13 @@ function onSplitCodemirror(index: number) {
           :autofocus="true"
           :indent-with-tab="true"
           :tab-size="2"
-          :extensions="[json(), jsonLinter, theme, EditorView.lineWrapping]"
+          :extensions="[
+            json(),
+            jsonLinter,
+            lintGutter(),
+            theme,
+            EditorView.lineWrapping,
+          ]"
         />
       </div>
     </div>
