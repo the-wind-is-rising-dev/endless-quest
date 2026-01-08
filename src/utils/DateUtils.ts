@@ -26,7 +26,7 @@ class DateTimeUtils {
 
     return pattern.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => {
       const value = map[match];
-      return value ? String(value).padStart(2, "0") : match;
+      return value != undefined ? String(value).padStart(2, "0") : match;
     });
   }
 
