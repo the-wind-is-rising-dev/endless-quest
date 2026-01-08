@@ -31,6 +31,12 @@ export const routes = [
         component: import("../page/common/urlcodec.vue"),
         title: "URL 编解码",
       },
+      {
+        path: "timestamp",
+        name: "timestamp",
+        component: import("../page/common/timestamp.vue"),
+        title: "时间戳转换器",
+      },
     ],
   },
   {

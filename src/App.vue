@@ -14,9 +14,7 @@ const selectedTool = ref<string[]>([]);
 const subToolList = ref<any[]>(routes[0].children);
 const selectedSubTool = ref<string[]>([]);
 
-const currentDatetime = ref<string>(
-  DateUtils.formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss")
-);
+const currentDatetime = ref<string>(DateUtils.formatDateTime(new Date()));
 const interval = ref<any>(null);
 
 // 选择工具
@@ -66,10 +64,7 @@ onMounted(() => {
   );
   // 定时更新时间
   interval.value = setInterval(() => {
-    currentDatetime.value = DateUtils.formatDateTime(
-      new Date(),
-      "yyyy-MM-dd hh:mm:ss"
-    );
+    currentDatetime.value = DateUtils.formatDateTime(new Date());
   }, 200);
 });
 onUnmounted(() => {

@@ -11,36 +11,65 @@ class DateTimeUtils {
   /**
    * 格式化日期
    */
-  public formatDateTime(date: Date, format: string) {
-    const o: any = {
-      "M+": date.getMonth() + 1, // 月份
-      "d+": date.getDate(), // 日
-      "h+": date.getHours() % 12 === 0 ? 12 : date.getHours() % 12, // 小时
-      "H+": date.getHours(), // 小时
-      "m+": date.getMinutes(), // 分
-      "s+": date.getSeconds(), // 秒
-      "q+": Math.floor((date.getMonth() + 3) / 3), // 季度
-      S: date.getMilliseconds(), // 毫秒
-      a: date.getHours() < 12 ? "上午" : "下午", // 上午/下午
-      A: date.getHours() < 12 ? "AM" : "PM", // AM/PM
+  public formatDateTime(
+    date: Date,
+    pattern: string = "YYYY-MM-DD HH:mm:ss"
+  ): string {
+    const map: { [key: string]: number } = {
+      YYYY: date.getFullYear(),
+      MM: date.getMonth() + 1,
+      DD: date.getDate(),
+      HH: date.getHours(),
+      mm: date.getMinutes(),
+      ss: date.getSeconds(),
     };
-    if (/(y+)/.test(format)) {
-      format = format.replace(
-        RegExp.$1,
-        (date.getFullYear() + "").substr(4 - RegExp.$1.length)
+
+    return pattern.replace(/YYYY|MM|DD|HH|mm|ss/g, (match) => {
+      const value = map[match];
+      return value ? String(value).padStart(2, "0") : match;
+    });
+  }
+
+  public parseDateTime(dateTimeStr: string): Date {
+    if (!dateTimeStr) {
+      throw new Error("Date string is empty");
+    }
+
+    // 验证格式
+    const formatRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/;
+    if (!formatRegex.test(dateTimeStr)) {
+      throw new Error(
+        `Invalid date format: ${dateTimeStr}. Expected format: YYYY-MM-DD HH:MM:SS`
       );
     }
-    for (const k in o) {
-      if (new RegExp("(" + k + ")").test(format)) {
-        format = format.replace(
-          RegExp.$1,
-          RegExp.$1.length === 1
-            ? o[k]
-            : ("00" + o[k]).substr(("" + o[k]).length)
-        );
+
+    try {
+      // 替换空格为 T 以符合 ISO 8601 格式
+      const isoString = dateTimeStr.replace(" ", "T");
+      const date = new Date(isoString);
+
+      // 验证日期是否有效
+      if (isNaN(date.getTime())) {
+        throw new Error("Invalid date values");
       }
+
+      return date;
+    } catch (error) {
+      throw new Error(`Error parsing date: ${error}`);
     }
-    return format;
+  }
+
+  public getChineseWeekday(date: Date): string {
+    const weekdays = [
+      "星期日",
+      "星期一",
+      "星期二",
+      "星期三",
+      "星期四",
+      "星期五",
+      "星期六",
+    ];
+    return weekdays[date.getDay()];
   }
 
   public plusDay(date: Date, days: number) {

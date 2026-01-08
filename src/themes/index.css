@@ -290,6 +290,7 @@
   .ant-picker {
     border: 1px solid var(--border-medium);
     border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
     .ant-picker-input {
       input {
         color: var(--text-primary);
