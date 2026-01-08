@@ -19,7 +19,7 @@ const timestampConverterResult = ref<any>({
   GMT: "",
 });
 // 时间戳转换
-function onTimestampConverter() {
+function onTimestampConverter(isShowMessage = true) {
   const timestamp = inputTimestamp.value;
   if (timestamp === undefined || timestamp === null) {
     return;
@@ -39,7 +39,7 @@ function onTimestampConverter() {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     GMT: date.toString(),
   };
-  message.success("转换成功");
+  isShowMessage && message.success("转换成功");
 }
 
 const inputDateTime = ref<string>("");
@@ -51,7 +51,7 @@ const dateTimeConverterResult = ref<any>({
   GMT: "",
 });
 // 日期时间转换
-function onDateTimeConverter() {
+function onDateTimeConverter(isShowMessage = true) {
   const dateTime = inputDateTime.value;
   if (!dateTime) {
     return;
@@ -67,7 +67,7 @@ function onDateTimeConverter() {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     GMT: date.toString(),
   };
-  message.success("转换成功");
+  isShowMessage && message.success("转换成功");
 }
 
 // 当前时间戳
@@ -95,9 +95,9 @@ onUnmounted(() => {
 function initialize() {
   const timestamp = DateUtils.timestamp();
   inputTimestamp.value = timestamp / 1000;
-  onTimestampConverter();
+  onTimestampConverter(false);
   inputDateTime.value = DateUtils.formatDateTime(new Date(timestamp));
-  onDateTimeConverter();
+  onDateTimeConverter(false);
 }
 initialize();
 </script>
