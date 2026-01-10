@@ -175,18 +175,6 @@
       }
     }
   }
-  .ant-input {
-    color: var(--text-primary);
-    background: var(--bg-primary);
-    font-size: var(--font-size-sm);
-    border: 1px solid var(--border-medium);
-    &:hover {
-      border-color: var(--brand-primary);
-    }
-    &::placeholder {
-      color: var(--text-tertiary);
-    }
-  }
 
   /* antd 消息弹窗 */
   .ant-message {
@@ -244,6 +232,71 @@
     }
   }
 
+  /* antd 输入框 */
+  .ant-input {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    font-size: var(--font-size-sm);
+    border: 1px solid var(--border-medium);
+    &:hover {
+      border-color: var(--brand-primary);
+    }
+    &::placeholder {
+      color: var(--text-tertiary);
+    }
+  }
+  .ant-input-group-wrapper {
+    .ant-input-group-addon {
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+      background: var(--bg-tertiary);
+      &:first-child {
+        border-top-left-radius: var(--radius-sm);
+        border-bottom-left-radius: var(--radius-sm);
+      }
+      &:last-child {
+        border-top-right-radius: var(--radius-sm);
+        border-bottom-right-radius: var(--radius-sm);
+      }
+    }
+    .ant-input {
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+      border-top-right-radius: var(--radius-sm);
+      border-bottom-right-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      &:hover {
+        border-color: var(--brand-primary);
+      }
+      &::placeholder {
+        color: var(--text-tertiary);
+      }
+    }
+    .ant-input-focused {
+      box-shadow: none;
+    }
+    .ant-input-handler-wrap {
+      background: var(--bg-secondary);
+      .ant-input-number-handler-up {
+        border-color: var(--border-medium);
+      }
+      .ant-input-handler-up-inner {
+        color: var(--text-primary);
+        &:hover {
+          color: var(--brand-primary);
+        }
+      }
+      .ant-input-handler-down {
+        border-color: var(--border-medium);
+      }
+      .ant-input-handler-down-inner {
+        color: var(--text-primary);
+        &:hover {
+          color: var(--brand-primary);
+        }
+      }
+    }
+  }
   /* antd 数值输入框 */
   .ant-input-number-group-wrapper {
     .ant-input-number-group-addon {
@@ -361,6 +414,17 @@ body {
   margin: 0;
   width: 100%;
   min-height: 100vh;
+}
+/* 全局隐藏所有滚动条 */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge, Opera */
+  width: 0;
+  height: 0;
 }
 
 #app {

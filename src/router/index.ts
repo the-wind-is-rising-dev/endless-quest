@@ -37,6 +37,12 @@ export const routes = [
         component: import("../page/common/timestamp.vue"),
         title: "时间戳转换器",
       },
+      {
+        path: "regex",
+        name: "regex",
+        component: import("../page/common/regex.vue"),
+        title: "正则表达式助手",
+      },
     ],
   },
   {
