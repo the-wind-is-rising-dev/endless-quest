@@ -498,7 +498,7 @@ function onRegexMatchChange() {
               r.groups && r.groups.length > 0 ? r.groups.join("、") : null
             }（位置: ${r.index}）`
         )
-        .join("\n")}`;
+        .join("\n\n")}`;
     } else {
       matchResult.value = "未找到匹配项";
       matchTextResult.value = "未找到匹配项";
@@ -724,7 +724,6 @@ initialize();
       <!-- 匹配结果文本信息 -->
       <a-textarea
         class="top-space-md"
-        style="line-height: 1.8"
         v-model:value="matchTextResult"
         :rows="8"
         placeholder="匹配文本结果"
