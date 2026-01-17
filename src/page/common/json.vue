@@ -109,8 +109,10 @@ function handleJsonEscapes(jsonString: string): string {
  * @returns 处理后的字符串
  */
 function handlePythonDictEscapes(jsonString: string): string {
-  jsonString = jsonString.replace(/"/g, '\\"');
   return jsonString
+    .replace(/"/g, '\\"')
+    .replace(/\[\s*'/g, '["')
+    .replace(/'\s*]/g, '"]')
     .replace(/{\s*'/g, '{"')
     .replace(/,\s*'/g, ',"')
     .replace(/'\s*:/g, '":')
