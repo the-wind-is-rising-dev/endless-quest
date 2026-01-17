@@ -409,6 +409,22 @@ const commonRegex = ref<
 ]);
 
 /**
+ * 转义 HTML 特殊字符
+ */
+function escapeHtml(text: string): string {
+  if (!text) return text;
+  const map: { [key: string]: string } = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+    "/": "&#x2F;",
+  };
+  return text.replace(/[&<>"'\/]/g, (s) => map[s]);
+}
+
+/**
  * 匹配结果变化
  */
 function onRegexMatchChange() {
@@ -455,12 +471,12 @@ function onRegexMatchChange() {
           inputContent.value
             .substring(startIndex, endIndex)
             .split("\n")
-            .map((it) => `<span>${it}</span>`)
+            .map((it) => `<span>${escapeHtml(it)}</span>`)
             .join("<br>")
         );
         matchResultList.push(
           '<span style="background: var(--bg-tertiary); padding: 0 var(--space-xs); border: 1px solid var(--brand-accent); border-radius: var(--radius-sm);">' +
-            result.matched.split("\n").join("<br>") +
+            escapeHtml(result.matched).split("\n").join("<br>") +
             "</span>"
         );
         startIndex = endIndex + result.matched.length;
@@ -469,7 +485,7 @@ function onRegexMatchChange() {
             inputContent.value
               .substring(startIndex)
               .split("\n")
-              .map((it) => `<span>${it}</span>`)
+              .map((it) => `<span>${escapeHtml(it)}</span>`)
               .join("<br>")
           );
         }
@@ -523,6 +539,7 @@ const focusResultDiv = () => {
   }
 };
 
+// 替换内容
 function onReplaceInputContent() {
   if (!inputContent.value || inputContent.value === "") {
     message.warn("请输入带匹配内容");
@@ -632,11 +649,11 @@ initialize();
         </a-button>
       </div>
       <div
-        class="top-space-lg"
+        class="top-space-md"
         style="height: 1px; background: var(--border-medium)"
       />
       <!-- 正则表达式输入框 -->
-      <div class="row column-center top-space-lg">
+      <div class="row column-center top-space-md">
         <a-input
           class="right-space-md"
           style="width: 60%"
@@ -682,15 +699,15 @@ initialize();
       </div>
       <!-- 匹配内容输入框 -->
       <a-textarea
-        class="top-space-lg"
+        class="top-space-md"
         v-model:value="inputContent"
-        :rows="6"
+        :rows="5"
         placeholder="输入待匹配内容"
         @change="onRegexMatchChange"
       />
       <!-- 匹配结果 -->
       <div
-        class="match-result top-space-lg"
+        class="match-result top-space-md"
         @keydown="handleKeydown"
         @click="focusResultDiv"
         tabindex="0"
@@ -706,14 +723,15 @@ initialize();
       </div>
       <!-- 匹配结果文本信息 -->
       <a-textarea
-        class="top-space-lg"
+        class="top-space-md"
+        style="line-height: 1.8"
         v-model:value="matchTextResult"
-        :rows="6"
+        :rows="8"
         placeholder="匹配文本结果"
         readonly
       />
       <!-- 替换文本 -->
-      <div class="row column-center top-space-lg">
+      <div class="row column-center top-space-md">
         <a-input
           class="right-space-md"
           style="width: 60%"
@@ -728,7 +746,7 @@ initialize();
       </div>
       <!-- 替换结果 -->
       <a-textarea
-        class="top-space-lg"
+        class="top-space-md"
         v-model:value="replaceResult"
         :rows="6"
         placeholder="替换结果"
@@ -791,11 +809,11 @@ initialize();
 .right-space-md {
   margin-right: var(--space-md);
 }
-.top-space-lg {
-  margin-top: var(--space-lg);
+.top-space-md {
+  margin-top: var(--space-md);
 }
 .match-result {
-  height: 150px;
+  height: 200px;
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
