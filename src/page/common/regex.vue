@@ -430,8 +430,6 @@ function escapeHtml(text: string): string {
 function onRegexMatchChange() {
   replaceResult.value = "";
   if (!regex.value || regex.value === "") {
-    matchResult.value = "正则表达式为空，请输入正则表达式";
-    matchTextResult.value = "正则表达式为空，请输入正则表达式";
     return;
   }
   if (!inputContent.value || inputContent.value === "") {
@@ -706,29 +704,34 @@ initialize();
         @change="onRegexMatchChange"
       />
       <!-- 匹配结果 -->
-      <div
-        class="match-result top-space-md"
-        @keydown="handleKeydown"
-        @click="focusResultDiv"
-        tabindex="0"
-        ref="resultDivRef"
-        :style="`${
-          matchResult && matchResult != '' ? '' : 'color: var(--text-tertiary)'
-        }`"
-      >
-        <div v-if="!matchResult || matchResult == ''">
-          匹配结果在输入文本中的所在位置
+      <div class="row top-space-md" style="height: 380px">
+        <div
+          class="match-result auto-fill"
+          @keydown="handleKeydown"
+          @click="focusResultDiv"
+          tabindex="0"
+          ref="resultDivRef"
+          :style="`${
+            matchResult && matchResult != ''
+              ? ''
+              : 'color: var(--text-tertiary)'
+          }`"
+        >
+          <div v-if="!matchResult || matchResult == ''">
+            匹配结果在输入文本中的所在位置
+          </div>
+          <div v-else v-html="matchResult"></div>
         </div>
-        <div v-else v-html="matchResult"></div>
+        <div style="width: var(--space-md)" />
+        <!-- 匹配结果文本信息 -->
+        <a-textarea
+          class="auto-fill"
+          v-model:value="matchTextResult"
+          placeholder="匹配文本结果"
+          readonly
+        />
       </div>
-      <!-- 匹配结果文本信息 -->
-      <a-textarea
-        class="top-space-md"
-        v-model:value="matchTextResult"
-        :rows="8"
-        placeholder="匹配文本结果"
-        readonly
-      />
+
       <!-- 替换文本 -->
       <div class="row column-center top-space-md">
         <a-input
@@ -747,14 +750,10 @@ initialize();
       <a-textarea
         class="top-space-md"
         v-model:value="replaceResult"
-        :rows="6"
+        :rows="12"
         placeholder="替换结果"
         readonly
       />
-      <!-- 常用正则表达式列表 -->
-      <div></div>
-      <!-- 特殊需求表达式 -->
-      <div></div>
     </div>
     <div class="regex-info-body column">
       <div class="title">常用正则表达式</div>
@@ -812,7 +811,6 @@ initialize();
   margin-top: var(--space-md);
 }
 .match-result {
-  height: 200px;
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-md);
