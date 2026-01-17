@@ -12,6 +12,7 @@ import {
   SplitCellsOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
+import { st } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 // JSON 语法检查器
 const jsonLinter = linter((view: EditorView) => {
@@ -103,6 +104,51 @@ function handleJsonEscapes(jsonString: string): string {
   });
 }
 
+/**
+ * 处理 python 字典转义字符
+ * @returns 处理后的字符串
+ */
+function handlePythonDictEscapes(jsonString: string): string {
+  return jsonString
+    .replace(/{\s*'/g, '{"')
+    .replace(/,\s*'/g, ',"')
+    .replace(/'\s*:/g, '":')
+    .replace(/:\s*'/g, ':"')
+    .replace(/'\s*,/g, '",')
+    .replace(/'\s*}/g, '"}');
+}
+
+/**
+ * 解析 JSON 字符串
+ * @param jsonString - JSON 字符串
+ * @param index - 当前索引
+ * @returns 解析后的对象
+ */
+function parseJson(jsonString: string, index: number): any {
+  let result = null;
+  const handleEscapesList = [handleJsonEscapes, handlePythonDictEscapes];
+  while (null == result) {
+    try {
+      result = JSON.parse(jsonString);
+    } catch (e) {}
+    // 成功解析则跳出
+    if (null != result) {
+      break;
+    }
+    // 不处理转义字符则跳出
+    if (!isConvertEscapesList.value[index]) {
+      break;
+    }
+    // 无转义字符处理函数则跳出
+    if (handleEscapesList.length <= 0) {
+      break;
+    }
+    // 处理转义字符
+    jsonString = handleEscapesList.pop()?.(jsonString) || jsonString;
+  }
+  return result;
+}
+
 // 展开/美化内容
 function onExpandContent(index: number) {
   if (contentList.value[index].length <= 0) {
@@ -111,21 +157,12 @@ function onExpandContent(index: number) {
   }
 
   let content = contentList.value[index];
-  try {
-    content = JSON.stringify(JSON.parse(content), null, 2);
-  } catch {
-    if (!isConvertEscapesList.value[index]) {
-      message.error("无法解析的 JSON 字符串");
-      throw new Error("无法解析的 JSON 字符串");
-    }
-    try {
-      content = handleJsonEscapes(content); // 验证处理后的字符串
-      content = JSON.stringify(JSON.parse(content), null, 2);
-    } catch {
-      message.error("无法解析的 JSON 字符串");
-      throw new Error("无法解析的 JSON 字符串");
-    }
+  content = parseJson(content, index);
+  if (null == content) {
+    message.error("无法解析的 JSON 字符串");
+    throw new Error("无法解析的 JSON 字符串");
   }
+  content = JSON.stringify(content, null, 2);
   contentList.value.splice(index, 1, content);
   message.success("展开成功");
 }
@@ -137,21 +174,13 @@ function onCompressContent(index: number) {
     return;
   }
   let content = contentList.value[index];
-  try {
-    content = JSON.stringify(JSON.parse(content));
-  } catch {
-    if (!isConvertEscapesList.value[index]) {
-      message.error("无法解析的 JSON 字符串");
-      throw new Error("无法解析的 JSON 字符串");
-    }
-    try {
-      content = handleJsonEscapes(content); // 验证处理后的字符串
-      content = JSON.stringify(JSON.parse(content));
-    } catch {
-      message.error("无法解析的 JSON 字符串");
-      throw new Error("无法解析的 JSON 字符串");
-    }
+  content = parseJson(content, index);
+  if (null == content) {
+    message.error("无法解析的 JSON 字符串");
+    throw new Error("无法解析的 JSON 字符串");
   }
+
+  content = JSON.stringify(content);
   contentList.value.splice(index, 1, content);
   message.success("压缩成功");
 }
@@ -226,7 +255,7 @@ function onSplitCodemirror(index: number) {
           v-model:checked="isConvertEscapesList[index]"
           @click="onConvertEscapes(index)"
         >
-          处理转义字符
+          转义字符智能处理
         </a-radio>
         <div style="margin-left: auto" />
         <a-popconfirm
