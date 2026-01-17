@@ -109,6 +109,7 @@ function handleJsonEscapes(jsonString: string): string {
  * @returns 处理后的字符串
  */
 function handlePythonDictEscapes(jsonString: string): string {
+  jsonString = jsonString.replace(/"/g, '\\"');
   return jsonString
     .replace(/{\s*'/g, '{"')
     .replace(/,\s*'/g, ',"')
@@ -125,12 +126,15 @@ function handlePythonDictEscapes(jsonString: string): string {
  * @returns 解析后的对象
  */
 function parseJson(jsonString: string, index: number): any {
+  const origin_content = jsonString;
   let result = null;
-  const handleEscapesList = [handleJsonEscapes, handlePythonDictEscapes];
+  const handleEscapesList = [handlePythonDictEscapes, handleJsonEscapes];
   while (null == result) {
     try {
       result = JSON.parse(jsonString);
-    } catch (e) {}
+    } catch (e) {
+      jsonString = origin_content;
+    }
     // 成功解析则跳出
     if (null != result) {
       break;
