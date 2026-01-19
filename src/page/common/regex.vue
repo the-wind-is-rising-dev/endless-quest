@@ -425,6 +425,35 @@ function escapeHtml(text: string): string {
 }
 
 /**
+ * 获取匹配结果列表
+ */
+function getRegexMatchResultList(): {
+  matched: string;
+  index: number;
+  groups: string[];
+}[] {
+  const regexObj = new RegExp(regex.value, regexFlag.value);
+  const resultList: { matched: string; index: number; groups: string[] }[] = [];
+  let match = null;
+  do {
+    match = regexObj.exec(inputContent.value);
+    if (null == match) {
+      break;
+    }
+    resultList.push({
+      matched: match[0],
+      index: match.index,
+      groups: match.slice(1),
+    });
+    // 防止无限循环（当正则可能匹配空字符串时）
+    if (match.index === regexObj.lastIndex) {
+      regexObj.lastIndex++;
+    }
+  } while (isGlobal.value);
+  return resultList;
+}
+
+/**
  * 匹配结果变化
  */
 function onRegexMatchChange() {
@@ -438,25 +467,7 @@ function onRegexMatchChange() {
     return;
   }
   try {
-    const regexObj = new RegExp(regex.value, regexFlag.value);
-    const resultList: { matched: string; index: number; groups: string[] }[] =
-      [];
-    let match = null;
-    do {
-      match = regexObj.exec(inputContent.value);
-      if (null == match) {
-        break;
-      }
-      resultList.push({
-        matched: match[0],
-        index: match.index,
-        groups: match.slice(1),
-      });
-      // 防止无限循环（当正则可能匹配空字符串时）
-      if (match.index === regexObj.lastIndex) {
-        regexObj.lastIndex++;
-      }
-    } while (isGlobal.value);
+    const resultList = getRegexMatchResultList();
 
     if (resultList.length > 0) {
       let startIndex: number = 0;
@@ -537,6 +548,32 @@ const focusResultDiv = () => {
   }
 };
 
+// 复制匹配结果
+function onCopyMatchResult() {
+  const result = getRegexMatchResultList()
+    .map((r) => r.matched)
+    .join("\n");
+  if (result.trim() === "") {
+    message.warn("未找到匹配项");
+    return;
+  }
+  onCopyContent(result, false);
+  message.success("匹配结果复制成功");
+}
+
+// 复制匹配组结果
+function onCopyMatchGroupResult() {
+  const result = getRegexMatchResultList()
+    .map((r) => JSON.stringify(r.groups))
+    .join("\n");
+  if (result.trim() === "") {
+    message.warn("未找到匹配项");
+    return;
+  }
+  onCopyContent(result, false);
+  message.success("匹配组结果复制成功");
+}
+
 // 替换内容
 function onReplaceInputContent() {
   if (!inputContent.value || inputContent.value === "") {
@@ -557,9 +594,9 @@ function onReplaceInputContent() {
   );
 }
 // 复制内容
-function onCopyContent(content: string) {
+function onCopyContent(content: string, isShowToast = true) {
   navigator.clipboard.writeText(content);
-  message.success("复制成功");
+  isShowToast && message.success("复制成功");
 }
 
 // 正则表达式标记改变
@@ -721,6 +758,16 @@ initialize();
             匹配结果在输入文本中的所在位置
           </div>
           <div v-else v-html="matchResult"></div>
+        </div>
+        <div style="width: var(--space-md)" />
+        <!-- 操作区 -->
+        <div class="column">
+          <a-button @click="onCopyMatchResult()">
+            <CopyOutlined />
+          </a-button>
+          <a-button class="top-space-md" @click="onCopyMatchGroupResult()">
+            <CopyOutlined />
+          </a-button>
         </div>
         <div style="width: var(--space-md)" />
         <!-- 匹配结果文本信息 -->
