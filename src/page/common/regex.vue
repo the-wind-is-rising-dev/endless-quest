@@ -771,12 +771,13 @@ initialize();
         </div>
         <div style="width: var(--space-md)" />
         <!-- 匹配结果文本信息 -->
-        <a-textarea
-          class="auto-fill"
-          v-model:value="matchTextResult"
-          placeholder="匹配文本结果"
-          readonly
-        />
+        <div class="row auto-fill">
+          <a-textarea
+            v-model:value="matchTextResult"
+            placeholder="匹配文本结果"
+            readonly
+          />
+        </div>
       </div>
 
       <!-- 替换文本 -->
