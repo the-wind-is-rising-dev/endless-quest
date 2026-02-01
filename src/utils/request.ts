@@ -14,8 +14,6 @@ axios.defaults.timeout = 5000;
 axios.defaults.withCredentials = false;
 // axios.defaults.headers.common['token'] =  AUTH_TOKEN
 axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
-// 允许跨域
-axios.defaults.headers.post["Access-Control-Allow-Origin-Type"] = "*";
 
 // 请求拦截器
 axios.interceptors.request.use(
@@ -23,7 +21,7 @@ axios.interceptors.request.use(
   (error) => {
     message.error(error.data.error.message);
     return Promise.reject(error.data.error.message);
-  }
+  },
 );
 
 // 响应拦截器
@@ -45,7 +43,7 @@ axios.interceptors.response.use(
         // 跳转登录页面
         case 403:
           message.error(
-            "用户得到授权，但是访问是被禁止的==>" + error.response.status
+            "用户得到授权，但是访问是被禁止的==>" + error.response.status,
           );
           break;
         case 404:
@@ -56,17 +54,17 @@ axios.interceptors.response.use(
           break;
         case 410:
           message.error(
-            "请求的资源被永久删除，且不会再得到的==>" + error.response.status
+            "请求的资源被永久删除，且不会再得到的==>" + error.response.status,
           );
           break;
         case 422:
           message.error(
-            "当创建一个对象时，发生一个验证错误==>" + error.response.status
+            "当创建一个对象时，发生一个验证错误==>" + error.response.status,
           );
           break;
         case 500:
           message.error(
-            "服务器发生错误，请检查服务器==>" + error.response.status
+            "服务器发生错误，请检查服务器==>" + error.response.status,
           );
           break;
         case 502:
@@ -74,7 +72,7 @@ axios.interceptors.response.use(
           break;
         case 503:
           message.error(
-            "服务不可用，服务器暂时过载或维护==>" + error.response.status
+            "服务不可用，服务器暂时过载或维护==>" + error.response.status,
           );
           break;
         case 504:
@@ -88,14 +86,14 @@ axios.interceptors.response.use(
       message.error("请求异常");
       return Promise.reject(error);
     }
-  }
+  },
 );
 var isShowLoading = true;
 export const post = (
   url: string,
   data: any,
   headers = {},
-  isLoading = true
+  isLoading = true,
 ): Promise<any> => {
   if (isShowLoading && isLoading) {
     isShowLoading = false;
@@ -111,7 +109,7 @@ export const post = (
 export const get = (
   url: string,
   headers = {},
-  isLoading = false
+  isLoading = false,
 ): Promise<any> => {
   if (isShowLoading && isLoading) {
     isShowLoading = false;
@@ -133,7 +131,7 @@ export const postDownLoad = (
   url: string,
   fileName: string,
   data: any,
-  headers = {}
+  headers = {},
 ) => {
   post(url, data, headers).then((response) => {
     console.log(`下载文件：fileName=${fileName}url=${url}`);
@@ -172,7 +170,7 @@ export interface ProcessStreamCallback {
 export function postStream(
   url: string,
   body: any,
-  processStreamCallback: ProcessStreamCallback
+  processStreamCallback: ProcessStreamCallback,
 ): Promise<any> {
   return new Promise((resolve, reject) => {
     const headers: Headers = new Headers();
@@ -225,7 +223,7 @@ export function postStream(
                 const delta = JSON.parse(
                   decoder.decode(byteBuffer.slice(6, byteIndex), {
                     stream: true,
-                  })
+                  }),
                 )["choices"][0]["delta"];
                 var reasoning_content = delta["reasoning_content"];
                 var content = delta["content"];
@@ -234,7 +232,7 @@ export function postStream(
                 processStreamCallback(
                   done,
                   reasoning_content ? reasoning_content : "",
-                  content ? content : ""
+                  content ? content : "",
                 );
               }
               lines = 0;
