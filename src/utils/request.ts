@@ -9,7 +9,7 @@ import { nextTick } from "vue";
 export const baseURL = "";
 // console.log("import.meta.env:", import.meta.env);
 axios.defaults.baseURL = baseURL && baseURL != "" ? baseURL : undefined;
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 60000;
 // 表示跨域请求时是否需要使用凭证
 axios.defaults.withCredentials = false;
 // axios.defaults.headers.common['token'] =  AUTH_TOKEN
