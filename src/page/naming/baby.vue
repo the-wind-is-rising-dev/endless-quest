@@ -195,13 +195,18 @@ const authorList = ref<string[]>([
 ]);
 const author = ref<string>("全部");
 
+// 结果
+const isShowResult = ref<boolean>(false);
+const historyList = ref<any[]>();
+const resultList = ref<any[]>([]);
+
 // 生成
 function onGenerate() {
   if (!/[\u4e00-\u9fa5]+/.test(familyName.value)) {
     message.error("请输入中文");
     return;
   }
-  message.success("正在生成中...");
+  message.loading("生成中", 0);
   generateBabyName({
     familyName: familyName.value,
     gender: gender.value,
@@ -215,8 +220,9 @@ function onGenerate() {
     size: 10,
   }).then((res) => {
     const data = JSON.parse(res.data);
-    const result = data.result;
-    console.log(result);
+    resultList.value = data.result;
+    isShowResult.value = true;
+    message.destroy();
     message.success("生成成功");
   });
 }
@@ -230,6 +236,7 @@ initialize();
   <div class="baby-page column">
     <!-- 生成按钮 -->
     <a-button
+      v-if="!isShowResult"
       class="generate-button"
       type="primary"
       size="large"
@@ -239,7 +246,7 @@ initialize();
       立即生成
     </a-button>
     <!-- 信息设置 -->
-    <div class="setting-page row auto-fill">
+    <div v-if="!isShowResult" class="setting-page row auto-fill">
       <!-- 基础信息 -->
       <div class="setting-item-page column auto-fill">
         <div class="title">基础信息</div>
@@ -372,7 +379,76 @@ initialize();
       </div>
     </div>
     <!-- 结果展示页面 -->
-    <div class="result-page"></div>
+    <div v-if="isShowResult" class="result-page column">
+      <a-button
+        type="primary"
+        style="margin: var(--space-sm); width: 80px"
+        @click="isShowResult = false"
+      >
+        返回
+      </a-button>
+      <div class="row auto-fill">
+        <!-- 生成记录列表 -->
+        <div class="history column auto-fill">
+          <div v-for="history in historyList"></div>
+        </div>
+        <!-- 结果列表 -->
+        <div class="result column auto-fill">
+          <div class="name-result" v-for="item in resultList">
+            <!-- 姓名 -->
+            <div class="item">
+              <span class="title">姓名：</span>
+              <span class="family-name">{{ item.familyName }}</span>
+              <span class="name">{{ item.name }}</span>
+            </div>
+            <!-- 适用性别 -->
+            <div class="item">
+              <span class="title">适用性别：</span>
+              <span class="content">{{ item.gender }}</span>
+            </div>
+            <!-- 适用类型 -->
+            <div class="item">
+              <span class="title">适用类型：</span>
+              <span class="content">{{ item.naming_types }}</span>
+            </div>
+            <!-- 来源 -->
+            <div class="item">
+              <span class="title">来源：</span>
+              <span class="content" style="color: var(--brand-secondary)">
+                {{ item.source }}
+              </span>
+            </div>
+            <!-- 出处 -->
+            <div class="item">
+              <span class="title">出处：</span>
+              <span class="content">《{{ item.poetry_name }}》</span>
+            </div>
+            <!-- 作者/朝代 -->
+            <div class="item">
+              <span class="title">作者/朝代：</span>
+              <span class="content">{{ item.poetry_author }}</span>
+            </div>
+            <!-- 赏析 -->
+            <div class="item">
+              <span class="title">赏析：</span>
+              <span class="content" style="color: var(--brand-secondary)">
+                {{ item.shangxi }}
+              </span>
+            </div>
+            <!-- 五行属性 -->
+            <div class="item">
+              <span class="title">五行属性：</span>
+              <span class="content">{{ item.wuxing }}</span>
+            </div>
+            <!-- 八字补益 -->
+            <div class="item">
+              <span class="title">八字补益：</span>
+              <span class="content">{{ item.eight_char_tips }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -423,5 +499,35 @@ initialize();
   }
 }
 .result-page {
+  .history {
+  }
+  .result {
+    .name-result {
+      margin: var(--space-md);
+      padding: var(--space-sm);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      .item {
+        margin: var(--space-xs);
+        font-size: var(--font-size-lg);
+        flex-wrap: wrap;
+        .title {
+          font-weight: var(--font-weight-bold);
+        }
+        .content {
+          color: var(--text-secondary);
+        }
+        .family-name {
+          font-weight: var(--font-weight-bold);
+          font-size: var(--font-size-lg);
+        }
+        .name {
+          font-weight: var(--font-weight-bold);
+          font-size: var(--font-size-lg);
+          color: var(--brand-primary);
+        }
+      }
+    }
+  }
 }
 </style>

@@ -22,5 +22,7 @@ export const generateBabyName = (data: {
         ...data,
       },
     },
+    {},
+    false,
   );
 };
