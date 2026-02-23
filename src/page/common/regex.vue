@@ -481,12 +481,12 @@ function onRegexMatchChange() {
             .substring(startIndex, endIndex)
             .split("\n")
             .map((it) => `<span>${escapeHtml(it)}</span>`)
-            .join("<br>")
+            .join("<br>"),
         );
         matchResultList.push(
           '<span style="background: var(--bg-tertiary); padding: 0 var(--space-xs); border: 1px solid var(--brand-accent); border-radius: var(--radius-sm);">' +
             escapeHtml(result.matched).split("\n").join("<br>") +
-            "</span>"
+            "</span>",
         );
         startIndex = endIndex + result.matched.length;
         if (index === resultList.length - 1) {
@@ -495,7 +495,7 @@ function onRegexMatchChange() {
               .substring(startIndex)
               .split("\n")
               .map((it) => `<span>${escapeHtml(it)}</span>`)
-              .join("<br>")
+              .join("<br>"),
           );
         }
       }
@@ -505,7 +505,7 @@ function onRegexMatchChange() {
           (r, i) =>
             `${i + 1}、匹配结果：${r.matched}，匹配组结果：${
               r.groups && r.groups.length > 0 ? r.groups.join("、") : null
-            }（位置: ${r.index}）`
+            }（位置: ${r.index}）`,
         )
         .join("\n\n")}`;
     } else {
@@ -590,7 +590,7 @@ function onReplaceInputContent() {
   }
   replaceResult.value = inputContent.value.replace(
     new RegExp(regex.value, regexFlag.value),
-    replaceCotent.value
+    replaceCotent.value,
   );
 }
 // 复制内容
@@ -631,9 +631,9 @@ initialize();
           class="right-space-md"
           type="primary"
           @click="
-            (regex = '\\d+'),
-              (inputContent = 'HELLO WORLD!1234567890你好世界！'),
-              onRegexMatchChange()
+            ((regex = '\\d+'),
+            (inputContent = 'HELLO WORLD!1234567890你好世界！'),
+            onRegexMatchChange())
           "
         >
           匹配数字
@@ -642,9 +642,9 @@ initialize();
           class="right-space-md"
           type="primary"
           @click="
-            (regex = '[A-Za-z]+'),
-              (inputContent = 'HELLO WORLD!1234567890你好世界！'),
-              onRegexMatchChange()
+            ((regex = '[A-Za-z]+'),
+            (inputContent = 'HELLO WORLD!1234567890你好世界！'),
+            onRegexMatchChange())
           "
         >
           匹配字母
@@ -653,9 +653,9 @@ initialize();
           class="right-space-md"
           type="primary"
           @click="
-            (regex = '[\\u4e00-\\u9fa5]+'),
-              (inputContent = 'HELLO WORLD!1234567890你好世界！'),
-              onRegexMatchChange()
+            ((regex = '[\\u4e00-\\u9fa5]+'),
+            (inputContent = 'HELLO WORLD!1234567890你好世界！'),
+            onRegexMatchChange())
           "
         >
           匹配中文
@@ -664,9 +664,9 @@ initialize();
           class="right-space-md"
           type="primary"
           @click="
-            (regex = '-?\\d+(\\.\\d+)?'),
-              (inputContent = 'HELLO WORLD!1234.123你好世界！'),
-              onRegexMatchChange()
+            ((regex = '-?\\d+(\\.\\d+)?'),
+            (inputContent = 'HELLO WORLD!1234.123你好世界！'),
+            onRegexMatchChange())
           "
         >
           匹配浮点数
@@ -675,9 +675,9 @@ initialize();
           class="right-space-md"
           type="primary"
           @click="
-            (regex = `^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$`),
-              (inputContent = '12345he@gmail.com'),
-              onRegexMatchChange()
+            ((regex = `^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$`),
+            (inputContent = '12345he@gmail.com'),
+            onRegexMatchChange())
           "
         >
           匹配邮箱
@@ -709,21 +709,21 @@ initialize();
                 <a-radio
                   style="margin: var(--space-md)"
                   v-model:checked="isGlobal"
-                  @click="(isGlobal = !isGlobal), onRegexFlagChange()"
+                  @click="((isGlobal = !isGlobal), onRegexFlagChange())"
                 >
                   全局搜索 -g
                 </a-radio>
                 <a-radio
                   style="margin: var(--space-xs) var(--space-md)"
                   v-model:checked="isIgnoreCase"
-                  @click="(isIgnoreCase = !isIgnoreCase), onRegexFlagChange()"
+                  @click="((isIgnoreCase = !isIgnoreCase), onRegexFlagChange())"
                 >
                   忽略大小写 -i
                 </a-radio>
                 <a-radio
                   style="margin: var(--space-md)"
                   v-model:checked="isMulti"
-                  @click="(isMulti = !isMulti), onRegexFlagChange()"
+                  @click="((isMulti = !isMulti), onRegexFlagChange())"
                 >
                   多行模式 -m
                 </a-radio>
@@ -845,6 +845,7 @@ initialize();
 .regex-root {
   width: 100%;
   height: 100%;
+  overflow-y: auto;
 }
 .regex-body {
   margin-right: var(--space-lg);
