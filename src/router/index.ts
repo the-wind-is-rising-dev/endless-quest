@@ -17,7 +17,7 @@ export const routes = [
         path: "json",
         name: "Json",
         component: import("../page/common/json.vue"),
-        title: "JSON 格式化",
+        title: "JSON 工具",
       },
       {
         path: "base64",
