@@ -12,7 +12,6 @@ import {
   SplitCellsOutlined,
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
-import { st } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 // JSON 语法检查器
 const jsonLinter = linter((view: EditorView) => {
@@ -127,7 +126,7 @@ function handlePythonDictEscapes(jsonString: string): string {
  * @param index - 当前索引
  * @returns 解析后的对象
  */
-function parseJson(jsonString: string, index: number): any {
+function parseJson(jsonString: string, isConvertEscapes: boolean = false): any {
   const origin_content = jsonString;
   let result = null;
   const handleEscapesList = [handlePythonDictEscapes, handleJsonEscapes];
@@ -142,7 +141,7 @@ function parseJson(jsonString: string, index: number): any {
       break;
     }
     // 不处理转义字符则跳出
-    if (!isConvertEscapesList.value[index]) {
+    if (!isConvertEscapes) {
       break;
     }
     // 无转义字符处理函数则跳出
@@ -163,7 +162,7 @@ function onExpandContent(index: number) {
   }
 
   let content = contentList.value[index];
-  content = parseJson(content, index);
+  content = parseJson(content, isConvertEscapesList.value[index]);
   if (null == content) {
     message.error("无法解析的 JSON 字符串");
     throw new Error("无法解析的 JSON 字符串");
@@ -180,7 +179,7 @@ function onCompressContent(index: number) {
     return;
   }
   let content = contentList.value[index];
-  content = parseJson(content, index);
+  content = parseJson(content, isConvertEscapesList.value[index]);
   if (null == content) {
     message.error("无法解析的 JSON 字符串");
     throw new Error("无法解析的 JSON 字符串");
@@ -197,12 +196,138 @@ function onCopyContent(index: number) {
   message.success("复制成功");
 }
 
-// 转义字符
-function onConvertEscapes(index: number) {
+// 添加转义字符
+function onAddEscapeCharacters(index: number) {
+  if (contentList.value[index].length <= 0) {
+    message.warning("请输入内容");
+    return;
+  }
+  let content = contentList.value[index];
+  content = JSON.stringify(content);
+  contentList.value.splice(index, 1, content.substring(1, content.length - 1));
+  message.success("添加转义字符成功");
+}
+
+// 去除转义字符
+function onRemoveEscapeCharacters(index: number) {
+  if (contentList.value[index].length <= 0) {
+    message.warning("请输入内容");
+    return;
+  }
+  let content = contentList.value[index];
+  content = handleJsonEscapes(content);
+  contentList.value.splice(index, 1, content);
+  message.success("去除转义字符成功");
+}
+
+// Unicode 转中文
+function onUnicodeToChinese(index: number) {
+  if (contentList.value[index].length <= 0) {
+    message.warning("请输入内容");
+    return;
+  }
+  let content = contentList.value[index];
+  try {
+    const text = content;
+    // 方法1: 使用JSON.parse（适用于完整的Unicode字符串）
+    content = JSON.parse('"' + text.replace(/"/g, '\\"') + '"');
+  } catch {
+    const text = content;
+    // 方法2: 正则替换
+    content = text.replace(/\\u([\dA-Fa-f]{4})/g, (_, code) =>
+      String.fromCharCode(parseInt(code, 16)),
+    );
+  }
+  contentList.value.splice(index, 1, content);
+  message.success("Unicode 转中文成功");
+}
+
+/**
+ * 简洁实用的中英文混合编码
+ * @param {string} text 输入字符串
+ * @returns {string} 编码后的字符串
+ */
+function encodeChineseEmoji(text: string) {
+  const result = [];
+
+  for (const char of text) {
+    const code = char.charCodeAt(0);
+
+    // 判断是否中文 (基本中文范围)
+    const isChinese =
+      (code >= 0x4e00 && code <= 0x9fff) || (code >= 0x3400 && code <= 0x4dbf);
+
+    // 判断是否表情 (常见表情范围)
+    const isEmoji =
+      (code >= 0xd800 && code <= 0xdfff) || // 代理对
+      (code >= 0x2600 && code <= 0x27ff) || // 符号
+      (code >= 0x1f300 && code <= 0x1f9ff); // 表情
+
+    if (isChinese || isEmoji) {
+      const codePoint = char.codePointAt(0);
+      if (codePoint === undefined) {
+        result.push(char);
+        continue;
+      }
+      if (codePoint > 0xffff) {
+        // 处理表情符号的代理对
+        const high = Math.floor((codePoint - 0x10000) / 0x400) + 0xd800;
+        const low = ((codePoint - 0x10000) % 0x400) + 0xdc00;
+        result.push("\\u" + high.toString(16).toUpperCase().padStart(4, "0"));
+        result.push("\\u" + low.toString(16).toUpperCase().padStart(4, "0"));
+      } else {
+        result.push(
+          "\\u" + codePoint.toString(16).toUpperCase().padStart(4, "0"),
+        );
+      }
+    } else {
+      result.push(char);
+    }
+  }
+
+  return result.join("");
+}
+
+// 中文转 Unicode
+function onChineseToUnicode(index: number) {
+  if (contentList.value[index].length <= 0) {
+    message.warning("请输入内容");
+    return;
+  }
+  let content = contentList.value[index];
+  content = encodeChineseEmoji(content);
+  contentList.value.splice(index, 1, content);
+
+  message.success("中文转 Unicode 成功");
+}
+
+//  压缩并转义
+function onCompressAndConvertEscapes(index: number) {
+  if (contentList.value[index].length <= 0) {
+    message.warning("请输入内容");
+    return;
+  }
+  let content = contentList.value[index];
+  // 压缩
+  content = parseJson(content, false);
+  if (null == content) {
+    message.error("无法解析的 JSON 字符串");
+    throw new Error("无法解析的 JSON 字符串");
+  }
+  content = JSON.stringify(content);
+  // 转义
+  content = JSON.stringify(content);
+  contentList.value.splice(index, 1, content.substring(1, content.length - 1));
+
+  message.success("压缩并转义成功");
+}
+
+// 自动转义字符
+function onAutoConvertEscapes(index: number) {
   isConvertEscapesList.value.splice(
     index,
     1,
-    !isConvertEscapesList.value[index]
+    !isConvertEscapesList.value[index],
   );
   if (isConvertEscapesList.value[index]) {
     message.success("已开启转义字符");
@@ -224,7 +349,7 @@ function onSplitCodemirror(index: number) {
   isConvertEscapesList.value.splice(
     index + 1,
     0,
-    isConvertEscapesList.value[index]
+    isConvertEscapesList.value[index],
   );
   message.success("拆分成功");
 }
@@ -237,7 +362,7 @@ function onSplitCodemirror(index: number) {
       class="codemirror-container column auto-fill"
     >
       <!-- 操作栏 -->
-      <div class="row" style="margin-bottom: var(--space-sm)">
+      <div class="row column-center" style="margin-bottom: var(--space-sm)">
         <a-button type="primary" ghost @click="onExpandContent(index)">
           <ExpandOutlined />
         </a-button>
@@ -250,18 +375,48 @@ function onSplitCodemirror(index: number) {
           <CompressOutlined />
         </a-button>
         <a-button
-          style="margin-left: var(--space-md)"
+          style="margin-left: var(--space-xs)"
           @click="onCopyContent(index)"
         >
           <CopyOutlined />
+        </a-button>
+        <a-button
+          style="margin-left: var(--space-md)"
+          @click="onAddEscapeCharacters(index)"
+        >
+          添加转义
+        </a-button>
+        <a-button
+          style="margin-left: var(--space-xs)"
+          @click="onRemoveEscapeCharacters(index)"
+        >
+          去除转义
+        </a-button>
+        <a-button
+          style="margin-left: var(--space-xs)"
+          @click="onUnicodeToChinese(index)"
+        >
+          Unicode 转中文
+        </a-button>
+        <a-button
+          style="margin-left: var(--space-xs)"
+          @click="onChineseToUnicode(index)"
+        >
+          转中文转 Unicode
+        </a-button>
+        <a-button
+          style="margin-left: var(--space-xs)"
+          @click="onCompressAndConvertEscapes(index)"
+        >
+          压缩并转义
         </a-button>
         <a-radio
           class="center"
           style="margin-left: var(--space-md); user-select: none"
           v-model:checked="isConvertEscapesList[index]"
-          @click="onConvertEscapes(index)"
+          @click="onAutoConvertEscapes(index)"
         >
-          转义字符智能处理
+          自动去除转义字符
         </a-radio>
         <div style="margin-left: auto" />
         <a-popconfirm
@@ -275,7 +430,7 @@ function onSplitCodemirror(index: number) {
           </a-button>
         </a-popconfirm>
         <a-button
-          v-if="contentList.length < 3"
+          v-if="contentList.length < 1"
           style="margin-left: var(--space-xs)"
           @click="onSplitCodemirror(index)"
         >
