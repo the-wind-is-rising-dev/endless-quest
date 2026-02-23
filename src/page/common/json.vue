@@ -2,6 +2,7 @@
 import { json } from "@codemirror/lang-json";
 import { linter, lintGutter } from "@codemirror/lint";
 import { EditorView } from "codemirror";
+import { showMinimap, MinimapConfig } from "@replit/codemirror-minimap";
 import { ref } from "vue";
 import { Codemirror } from "vue-codemirror"; // 注意组件名
 import {
@@ -14,7 +15,9 @@ import {
 import { message } from "ant-design-vue";
 
 // JSON 语法检查器
+const jsonErrorPos = ref<any[]>([]);
 const jsonLinter = linter((view: EditorView) => {
+  jsonErrorPos.value = [];
   const diagnostics: any[] = [];
   const doc = view.state.doc.toString();
 
@@ -25,7 +28,13 @@ const jsonLinter = linter((view: EditorView) => {
   } catch (e: any) {
     // 尝试更精确地定位错误位置
     const errorPos = locateJsonError(doc, e.message);
-
+    const from: number = errorPos?.from ? errorPos?.from : 0;
+    const to: number = errorPos?.to ? errorPos.to : doc.length;
+    for (let i = from; i < to; i++) {
+      jsonErrorPos.value.push({
+        i: "red",
+      });
+    }
     diagnostics.push({
       from: errorPos?.from ? errorPos.from : 0,
       to: errorPos?.to ? errorPos.to : doc.length,
@@ -68,6 +77,15 @@ const theme = EditorView.theme({
   ".cm-content": { fontFamily: "Monaco, Consolas, monospace" },
   ".cm-gutters": { background: "var(--bg-tertiary)" },
 });
+// 最小化视图(预览)
+const minimapConfig: MinimapConfig = {
+  create(view) {
+    const dom = document.createElement("div");
+    return { dom };
+  },
+  displayText: "blocks",
+  gutters: jsonErrorPos.value,
+};
 // 转义字符
 const isConvertEscapesList = ref<boolean[]>([true]);
 
@@ -438,7 +456,7 @@ function onSplitCodemirror(index: number) {
         </a-button>
       </div>
       <!-- 编辑展示栏 -->
-      <div class="auto-fill" style="border: 1px solid var(--border-medium)">
+      <div class="codemirror-content">
         <codemirror
           v-model="contentList[index]"
           style="width: 100%; height: 100%"
@@ -451,6 +469,7 @@ function onSplitCodemirror(index: number) {
             lintGutter(),
             theme,
             EditorView.lineWrapping,
+            showMinimap.of(minimapConfig),
           ]"
         />
       </div>
@@ -466,5 +485,14 @@ function onSplitCodemirror(index: number) {
 .codemirror-container {
   height: 100%;
   margin-right: var(--space-lg);
+}
+.codemirror-content {
+  height: 100%;
+  overflow-y: auto;
+  border: 1px solid var(--border-medium);
+}
+.cm-minimap {
+  white-space: pre-wrap; /* 支持换行 */
+  word-break: break-all; /* 强制断词 */
 }
 </style>

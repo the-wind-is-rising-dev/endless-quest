@@ -60,7 +60,7 @@ onMounted(() => {
     () => router.currentRoute.value.path,
     (n, _o) => {
       initSelectedTool(n);
-    }
+    },
   );
   // 定时更新时间
   interval.value = setInterval(() => {
@@ -94,8 +94,8 @@ onUnmounted(() => {
       </div>
       <Theme />
     </div>
-    <div class="app-content row auto-fill">
-      <div class="siderbar">
+    <div class="row auto-fill" style="margin-top: 64px">
+      <div class="siderbar" style="width: 160px">
         <div style="margin-top: var(--space-xl)">
           <div
             :class="`item ${
@@ -110,18 +110,24 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="main-content auto-fill column">
-        <div style="background: var(--bg-sidebar)">
+        <div class="column" style="height: 30px; background: var(--bg-sidebar)">
           <div
             style="
               width: 100%;
               height: var(--space-lg);
-              margin-top: var(--space-xl);
+              margin-top: auto;
               background: var(--bg-primary);
               border-top-left-radius: var(--space-2xl);
             "
           />
         </div>
-        <div class="auto-fill" style="margin-left: var(--space-lg)">
+        <div
+          style="
+            margin-left: var(--space-lg);
+            width: calc(100vw - 160px - var(--space-lg));
+            height: calc(100vh - 64px - 30px);
+          "
+        >
           <router-view></router-view>
         </div>
       </div>
@@ -150,9 +156,6 @@ onUnmounted(() => {
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
   }
-}
-.app-content {
-  margin-top: 64px;
 }
 .toolbar {
   padding: var(--space-md);
@@ -192,7 +195,6 @@ onUnmounted(() => {
   top: 64px; /* 避开头部工具栏 */
   left: 0;
   bottom: 0;
-  width: 160px;
   background: var(--bg-sidebar);
   overflow-y: auto; /* 如果内容过多可以滚动 */
   z-index: 999; /* 确保在内容层之上 */
