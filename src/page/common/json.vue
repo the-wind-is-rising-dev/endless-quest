@@ -380,57 +380,66 @@ function onSplitCodemirror(index: number) {
       class="codemirror-container column auto-fill"
     >
       <!-- 操作栏 -->
-      <div class="row column-center" style="margin-bottom: var(--space-sm)">
-        <a-button type="primary" ghost @click="onExpandContent(index)">
+      <div class="row column-center" style="flex-wrap: wrap">
+        <a-button
+          style="margin-bottom: var(--space-sm)"
+          type="primary"
+          ghost
+          @click="onExpandContent(index)"
+        >
           <ExpandOutlined />
         </a-button>
         <a-button
           type="primary"
           ghost
-          style="margin-left: var(--space-xs)"
+          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
           @click="onCompressContent(index)"
         >
           <CompressOutlined />
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs)"
+          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
           @click="onCopyContent(index)"
         >
           <CopyOutlined />
         </a-button>
         <a-button
-          style="margin-left: var(--space-md)"
+          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
           @click="onAddEscapeCharacters(index)"
         >
           添加转义
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs)"
+          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
           @click="onRemoveEscapeCharacters(index)"
         >
           去除转义
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs)"
+          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
           @click="onUnicodeToChinese(index)"
         >
           Unicode 转中文
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs)"
+          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
           @click="onChineseToUnicode(index)"
         >
           转中文转 Unicode
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs)"
+          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
           @click="onCompressAndConvertEscapes(index)"
         >
           压缩并转义
         </a-button>
         <a-radio
           class="center"
-          style="margin-left: var(--space-md); user-select: none"
+          style="
+            margin-left: var(--space-md);
+            margin-bottom: var(--space-sm);
+            user-select: none;
+          "
           v-model:checked="isConvertEscapesList[index]"
           @click="onAutoConvertEscapes(index)"
         >
