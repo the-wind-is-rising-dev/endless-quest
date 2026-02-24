@@ -1,0 +1,1 @@
+import{_ as e,e as n,o as s}from"./index-CNb1k0Il.js";const c={};function o(r,t){return s(),n("div",null,"公司起名")}const _=e(c,[["render",o],["__file","/home/runner/work/endless-quest/endless-quest/src/page/naming/company.vue"]]);export{_ as default};

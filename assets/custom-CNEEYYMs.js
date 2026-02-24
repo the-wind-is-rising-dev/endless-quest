@@ -1,0 +1,1 @@
+import{_ as e,e as s,o as n}from"./index-CNb1k0Il.js";const c={};function o(r,t){return n(),s("div",null,"自定义类型起名")}const a=e(c,[["render",o],["__file","/home/runner/work/endless-quest/endless-quest/src/page/naming/custom.vue"]]);export{a as default};

@@ -1,0 +1,1 @@
+import{_ as e,e as s,o as n}from"./index-CNb1k0Il.js";const r={};function o(t,c){return n(),s("div",null,"软件起名")}const _=e(r,[["render",o],["__file","/home/runner/work/endless-quest/endless-quest/src/page/naming/software.vue"]]);export{_ as default};
