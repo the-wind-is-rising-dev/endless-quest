@@ -377,75 +377,79 @@ function onSplitCodemirror(index: number) {
   <div class="json-root row">
     <div
       v-for="(_item, index) in contentList"
-      class="codemirror-container column auto-fill"
+      class="codemirror-container row auto-fill"
     >
       <!-- 操作栏 -->
-      <div class="row column-center" style="flex-wrap: wrap">
+      <div
+        class="column"
+        style="
+          padding-right: var(--space-sm);
+          padding-bottom: var(--space-sm);
+          flex-wrap: wrap;
+        "
+      >
         <a-button
           style="margin-bottom: var(--space-sm)"
           type="primary"
           ghost
           @click="onExpandContent(index)"
         >
-          <ExpandOutlined />
+          <ExpandOutlined />展开 JSON
         </a-button>
         <a-button
           type="primary"
           ghost
-          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
+          style="margin-bottom: var(--space-sm)"
           @click="onCompressContent(index)"
         >
-          <CompressOutlined />
+          <CompressOutlined />压缩 JSON
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
+          type="primary"
+          style="margin-bottom: var(--space-md)"
           @click="onCopyContent(index)"
         >
-          <CopyOutlined />
+          <CopyOutlined />复制 JSON
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
+          style="margin-bottom: var(--space-sm)"
           @click="onAddEscapeCharacters(index)"
         >
-          添加转义
+          添加转义字符
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
+          style="margin-bottom: var(--space-sm)"
           @click="onRemoveEscapeCharacters(index)"
         >
-          去除转义
+          去除转义字符
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
+          style="margin-bottom: var(--space-sm)"
           @click="onUnicodeToChinese(index)"
         >
-          Unicode 转中文
+          Unicode 编码
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
+          style="margin-bottom: var(--space-sm)"
           @click="onChineseToUnicode(index)"
         >
-          转中文转 Unicode
+          解析 Unicode
         </a-button>
         <a-button
-          style="margin-left: var(--space-xs); margin-bottom: var(--space-sm)"
+          style="margin-bottom: var(--space-sm)"
           @click="onCompressAndConvertEscapes(index)"
         >
           压缩并转义
         </a-button>
         <a-radio
           class="center"
-          style="
-            margin-left: var(--space-md);
-            margin-bottom: var(--space-sm);
-            user-select: none;
-          "
+          style="margin-bottom: var(--space-sm); user-select: none"
           v-model:checked="isConvertEscapesList[index]"
           @click="onAutoConvertEscapes(index)"
         >
-          自动去除转义字符
+          自动转义
         </a-radio>
-        <div style="margin-left: auto" />
+        <div style="margin-top: auto" />
         <a-popconfirm
           title="确定删除该窗口?"
           ok-text="确定"
@@ -453,15 +457,15 @@ function onSplitCodemirror(index: number) {
           @confirm="onCompressCodemirror(index)"
         >
           <a-button v-if="contentList.length > 1">
-            <MergeCellsOutlined />
+            <MergeCellsOutlined />删除窗口
           </a-button>
         </a-popconfirm>
         <a-button
-          v-if="contentList.length < 1"
-          style="margin-left: var(--space-xs)"
+          v-if="contentList.length < 2"
+          style="margin-top: var(--space-xs)"
           @click="onSplitCodemirror(index)"
         >
-          <SplitCellsOutlined />
+          <SplitCellsOutlined />拆分窗口
         </a-button>
       </div>
       <!-- 编辑展示栏 -->
@@ -496,9 +500,11 @@ function onSplitCodemirror(index: number) {
   margin-right: var(--space-lg);
 }
 .codemirror-content {
+  width: 100%;
   height: 100%;
   overflow-y: auto;
   border: 1px solid var(--border-medium);
+  box-sizing: border-box;
 }
 .cm-minimap {
   white-space: pre-wrap; /* 支持换行 */
