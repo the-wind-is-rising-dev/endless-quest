@@ -38,7 +38,33 @@ const icon = ref<string>("");
 const iconSize = ref<number>(50);
 // 中间图标的旋转角度
 const iconRotation = ref<number>(0);
+// 中间图标的圆角
 const borderRadius = ref<number>(5);
+// 图标上传
+const iconInput = ref();
+// 处理背景图上传
+const handleIconUpload = (event: any) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // 检查文件类型
+  if (!file.type.startsWith("image/")) {
+    alert("请选择图片文件");
+    return;
+  }
+
+  // 限制文件大小（例如 5MB）
+  if (file.size > 20 * 1024 * 1024) {
+    alert("图片大小不能超过 20MB");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    icon.value = e.target.result; // 存储为 data URL
+  };
+  reader.readAsDataURL(file);
+};
 
 // 保存图片的方法
 // 获取父容器 DOM 的引用
@@ -51,7 +77,7 @@ const downloadPoster = async () => {
   try {
     // 调用 html2canvas 对父容器进行截图
     const canvas = await html2canvas(qrContainer.value, {
-      scale: 2, // 提高图片清晰度 [citation:1][citation:6]
+      scale: 1, // 提高图片清晰度 [citation:1][citation:6]
       backgroundColor: backgroundColor.value, // 设置背景色，避免透明背景
       useCORS: true, // 如果容器内有外部图片，启用跨域支持 [citation:1][citation:2]
       // 允许日志输出，便于调试
@@ -156,6 +182,16 @@ const downloadPoster = async () => {
           class="value xs"
           v-model:value="iconRotation"
           placeholder="旋转角度"
+        />
+        <a-button type="primary" ghost @click="() => iconInput.click()">
+          上传图标
+        </a-button>
+        <input
+          ref="iconInput"
+          type="file"
+          accept="image/*"
+          @change="handleIconUpload"
+          style="display: none"
         />
       </div>
     </div>
