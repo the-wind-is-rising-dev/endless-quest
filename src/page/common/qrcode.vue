@@ -3,6 +3,7 @@ import { ref } from "vue";
 import ColorPicker from "../../components/color-picker.vue";
 import { message } from "ant-design-vue";
 import QrcodeVue from "qrcode.vue";
+import html2canvas from "html2canvas";
 
 // 文本内容
 const text = ref<string>(
@@ -38,6 +39,38 @@ const iconSize = ref<number>(50);
 // 中间图标的旋转角度
 const iconRotation = ref<number>(0);
 const borderRadius = ref<number>(5);
+
+// 保存图片的方法
+// 获取父容器 DOM 的引用
+const qrContainer = ref(null);
+// 用于存储生成的图片数据
+const posterImage = ref("");
+const downloadPoster = async () => {
+  if (!qrContainer.value) return;
+
+  try {
+    // 调用 html2canvas 对父容器进行截图
+    const canvas = await html2canvas(qrContainer.value, {
+      scale: 2, // 提高图片清晰度 [citation:1][citation:6]
+      backgroundColor: backgroundColor.value, // 设置背景色，避免透明背景
+      useCORS: true, // 如果容器内有外部图片，启用跨域支持 [citation:1][citation:2]
+      // 允许日志输出，便于调试
+      logging: true,
+    });
+
+    // 将 Canvas 转换为图片数据 URL
+    const imageUrl = canvas.toDataURL("image/png");
+    posterImage.value = imageUrl; // 用于预览
+
+    // 创建下载链接
+    const link = document.createElement("a");
+    link.href = imageUrl;
+    link.download = "endless-quest-qrcode.png"; // 设置下载的文件名
+    link.click();
+  } catch (error) {
+    console.error("截图生成失败:", error);
+  }
+};
 </script>
 
 <template>
@@ -127,8 +160,17 @@ const borderRadius = ref<number>(5);
       </div>
     </div>
     <!-- 二维码预览区域 -->
-    <div style="margin: var(--space-sm); flex-shrink: 0">二维码预览：</div>
     <div
+      class="rwo column-center"
+      style="margin: var(--space-sm); flex-shrink: 0"
+    >
+      二维码预览：
+      <a-button type="primary" ghost @click="downloadPoster()">
+        下载二维码
+      </a-button>
+    </div>
+    <div
+      ref="qrContainer"
       class="center"
       :style="{
         position: 'relative',
