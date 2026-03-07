@@ -11,7 +11,7 @@ export const routes = [
     name: "Common",
     alias: "/",
     component: import("../page/common/common.vue"),
-    title: "常用工具",
+    title: "通用工具",
     children: [
       {
         path: "json",
@@ -43,6 +43,12 @@ export const routes = [
         component: import("../page/common/regex.vue"),
         title: "正则表达式助手",
       },
+      {
+        path: "qrcode",
+        name: "qrcode",
+        component: import("../page/common/qrcode.vue"),
+        title: "二维码生成器",
+      },
     ],
   },
   {
@@ -71,38 +77,38 @@ export const routes = [
       },
     ],
   },
-  {
-    path: "/naming",
-    name: "Naming",
-    component: import("../page/naming/naming.vue"),
-    title: "起名工具",
-    children: [
-      {
-        path: "baby",
-        name: "Baby",
-        component: import("../page/naming/baby.vue"),
-        title: "宝宝起名",
-      },
-      {
-        path: "company",
-        name: "Company",
-        component: import("../page/naming/company.vue"),
-        title: "公司起名",
-      },
-      {
-        path: "software",
-        name: "Software",
-        component: import("../page/naming/software.vue"),
-        title: "软件起名",
-      },
-      {
-        path: "custom",
-        name: "Custom",
-        component: import("../page/naming/custom.vue"),
-        title: "自定义类型起名",
-      },
-    ],
-  },
+  // {
+  //   path: "/naming",
+  //   name: "Naming",
+  //   component: import("../page/naming/naming.vue"),
+  //   title: "起名工具",
+  //   children: [
+  //     {
+  //       path: "baby",
+  //       name: "Baby",
+  //       component: import("../page/naming/baby.vue"),
+  //       title: "宝宝起名",
+  //     },
+  //     {
+  //       path: "company",
+  //       name: "Company",
+  //       component: import("../page/naming/company.vue"),
+  //       title: "公司起名",
+  //     },
+  //     {
+  //       path: "software",
+  //       name: "Software",
+  //       component: import("../page/naming/software.vue"),
+  //       title: "软件起名",
+  //     },
+  //     {
+  //       path: "custom",
+  //       name: "Custom",
+  //       component: import("../page/naming/custom.vue"),
+  //       title: "自定义类型起名",
+  //     },
+  //   ],
+  // },
 ];
 
 export const router = createRouter({

@@ -26,9 +26,8 @@ const handleChange = (newColor: any) => {
       <div
         class="color-preview"
         :style="{
-          width: width != null && width != undefined ? width + 'px' : undefined,
-          height:
-            height != null && height != undefined ? height + 'px' : undefined,
+          width: width + 'px',
+          height: height + 'px',
           backgroundColor: color,
         }"
       />
@@ -38,8 +37,6 @@ const handleChange = (newColor: any) => {
 
 <style lang="css" scoped>
 .color-preview {
-  width: 100%;
-  height: 100%;
   cursor: pointer;
   border: 1px solid #ddd;
   border-radius: 3px;
