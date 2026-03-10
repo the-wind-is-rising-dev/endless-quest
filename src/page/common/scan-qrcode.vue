@@ -54,8 +54,13 @@ function onCopyContent(content: string) {
 <template>
   <div class="scan-qrcode column column-center">
     <!-- 二维码图片上传按钮、摄像头按钮 -->
-    <div class="row" style="margin-top: var(--space-md)">
-      <a-button type="primary" ghost @click="() => qrcodeInput.$el.click()">
+    <div class="row" style="flex-wrap: wrap">
+      <a-button
+        type="primary"
+        ghost
+        style="margin: var(--space-xs)"
+        @click="() => qrcodeInput.$el.click()"
+      >
         选择二维码
         <QrcodeCapture
           ref="qrcodeInput"
@@ -68,21 +73,21 @@ function onCopyContent(content: string) {
       <a-button
         type="primary"
         ghost
-        style="margin-left: var(--space-md)"
+        style="margin: var(--space-xs)"
         @click="openCamera = !openCamera"
       >
         {{ openCamera ? "关闭摄像头" : "打开摄像头" }}
       </a-button>
       <a-button
         type="primary"
-        style="margin-left: var(--space-md)"
+        style="margin: var(--space-xs)"
         @click="onCopyContent(scanResult)"
       >
         复制结果
       </a-button>
       <a-button
         type="primary"
-        style="margin-left: var(--space-md)"
+        style="margin: var(--space-xs)"
         @click="scanResult = ''"
       >
         清空
@@ -93,8 +98,8 @@ function onCopyContent(content: string) {
       <div
         class="center"
         style="
-          width: 400px;
-          height: 400px;
+          width: var(--preview-size);
+          height: var(--preview-size);
           margin: var(--space-md) auto auto auto;
           border: 1px solid var(--border-medium);
           border-radius: var(--radius-sm);
@@ -102,8 +107,8 @@ function onCopyContent(content: string) {
       >
         <div
           :style="{
-            width: '380px',
-            height: '380px',
+            width: 'calc(var(--preview-size) - var(--preview-margin) * 2)',
+            height: 'calc(var(--preview-size) - var(--preview-margin) * 2)',
           }"
         >
           <QrcodeDropZone
@@ -136,8 +141,8 @@ function onCopyContent(content: string) {
         disabled
         placeholder="二维码识别结果"
         style="
-          width: 400px;
-          height: 400px;
+          width: var(--preview-size);
+          height: var(--preview-size);
           margin: var(--space-md) auto auto auto;
         "
       />
@@ -150,6 +155,8 @@ function onCopyContent(content: string) {
 .scan-qrcode {
   width: 100%;
   height: 100%;
+  --preview-size: 400px;
+  --preview-margin: 10px;
 }
 .drop-zone {
   width: 100%;
@@ -173,6 +180,18 @@ function onCopyContent(content: string) {
   .camera-off {
     width: 100%;
     height: 100%;
+  }
+}
+@media screen and (max-width: 600px) {
+  .scan-qrcode {
+    --preview-size: 300px;
+    --preview-margin: 5px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .scan-qrcode {
+    --preview-size: 220px;
+    --preview-margin: 5px;
   }
 }
 </style>
