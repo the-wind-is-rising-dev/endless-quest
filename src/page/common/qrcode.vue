@@ -185,14 +185,14 @@ const downloadPoster = async () => {
         />
         <a-button type="primary" ghost @click="() => iconInput.click()">
           上传图标
+          <input
+            ref="iconInput"
+            type="file"
+            accept="image/*"
+            @change="handleIconUpload"
+            style="display: none"
+          />
         </a-button>
-        <input
-          ref="iconInput"
-          type="file"
-          accept="image/*"
-          @change="handleIconUpload"
-          style="display: none"
-        />
       </div>
     </div>
     <!-- 二维码预览区域 -->

@@ -49,6 +49,12 @@ export const routes = [
         component: import("../page/common/qrcode.vue"),
         title: "二维码生成器",
       },
+      {
+        path: "scan-qrcode",
+        name: "scan-qrcode",
+        component: import("../page/common/scan-qrcode.vue"),
+        title: "二维码识别",
+      },
     ],
   },
   {
