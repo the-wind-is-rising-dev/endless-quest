@@ -43,7 +43,7 @@ const borderRadius = ref<number>(5);
 // 图标上传
 const iconInput = ref();
 // 处理背景图上传
-const handleIconUpload = (event: any) => {
+function handleIconUpload(event: any) {
   const file = event.target.files[0];
   if (!file) return;
 
@@ -53,7 +53,7 @@ const handleIconUpload = (event: any) => {
     return;
   }
 
-  // 限制文件大小（例如 5MB）
+  // 限制文件大小（例如 20MB）
   if (file.size > 20 * 1024 * 1024) {
     alert("图片大小不能超过 20MB");
     return;
@@ -64,7 +64,7 @@ const handleIconUpload = (event: any) => {
     icon.value = e.target.result; // 存储为 data URL
   };
   reader.readAsDataURL(file);
-};
+}
 
 // 保存图片的方法
 // 获取父容器 DOM 的引用
