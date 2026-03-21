@@ -44,6 +44,10 @@ defineSlots<{
   item(props: { item: any; index: number }): void;
 }>();
 
+const emit = defineEmits<{
+  (e: "scroll", scrollTop: number): void;
+}>();
+
 // 引用
 const viewportRef = ref<any>(null);
 
@@ -115,6 +119,7 @@ const updateViewportHeight = () => {
 // 滚动事件
 const onScroll = (e: any) => {
   scrollTop.value = e.target.scrollTop;
+  emit("scroll", scrollTop.value);
 };
 
 // 监听数据变化，确保滚动位置有效

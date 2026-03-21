@@ -128,7 +128,11 @@ onUnmounted(() => {
             height: calc(100vh - 64px - 30px);
           "
         >
-          <router-view></router-view>
+          <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component" :key="$route.name" />
+            </keep-alive>
+          </router-view>
         </div>
       </div>
     </div>

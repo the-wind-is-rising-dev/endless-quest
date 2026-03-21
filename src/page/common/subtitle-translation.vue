@@ -2,7 +2,7 @@
 import { message } from "ant-design-vue";
 import VirtualTable from "../../components/virtual-table.vue";
 import { Base64 } from "js-base64";
-import { ref } from "vue";
+import { onActivated, ref } from "vue";
 import { subtitleTranslate } from "../../api/agent";
 
 const currentHistoryIndex = ref<number>();
@@ -24,6 +24,8 @@ const subtitleInput = ref<any>(null);
 const subtitleFilename = ref<string>("");
 // 翻译语言
 const language = ref<string>("中文");
+// 滚动条位置
+const scrollTop = ref<number>(0);
 // 滚动位置
 const scrollViewRef = ref<any>(null);
 // 滚动到指定位置
@@ -208,6 +210,10 @@ function saveTranslation() {
     URL.revokeObjectURL(url);
   }
 }
+onActivated(() => {
+  // 路由页面激活时重新控制页面滚动至顶部
+  scrollViewRef.value.$el.scrollTop = scrollTop.value;
+});
 </script>
 <template>
   <div class="subtitle-root row">
@@ -293,6 +299,7 @@ function saveTranslation() {
           :space="space"
           :itemHeight="itemHeight"
           :visible-rows="10"
+          @scroll="(top: number) => (scrollTop = top)"
         >
           <template #item="{ item }">
             <div class="subtitle-item">

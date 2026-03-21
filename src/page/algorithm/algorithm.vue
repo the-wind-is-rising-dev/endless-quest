@@ -23,7 +23,7 @@ watch(
   () => router.currentRoute.value.path,
   (n, _o) => {
     contentInitialize(n);
-  }
+  },
 );
 function initialize() {
   console.log("initialize");
@@ -34,17 +34,21 @@ initialize();
 </script>
 
 <template>
-  <div v-if="isDisplayAllTools" class="func-root row">
-    <div
-      class="func-card"
-      v-for="(item, index) in cardList"
-      :key="index"
-      @click="onClickCard(item)"
-    >
-      {{ item.title }}
-    </div>
-  </div>
-  <router-view v-else></router-view>
+  <router-view v-slot="{ Component }">
+    <keep-alive>
+      <div v-if="isDisplayAllTools" class="func-root row">
+        <div
+          class="func-card"
+          v-for="(item, index) in cardList"
+          :key="index"
+          @click="onClickCard(item)"
+        >
+          {{ item.title }}
+        </div>
+      </div>
+      <component v-else :is="Component" :key="$route.name" />
+    </keep-alive>
+  </router-view>
 </template>
 
 <style scoped lang="css">
