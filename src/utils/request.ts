@@ -167,18 +167,23 @@ export const getDownLoad = (url: string, fileName: string, headers = {}) => {
 export interface ProcessStreamCallback {
   (done: boolean, reason: string, content: string): void;
 }
+
 export function postStream(
   url: string,
+  headers: Map<string, string> = new Map(),
   body: any,
   processStreamCallback: ProcessStreamCallback,
 ): Promise<any> {
   return new Promise((resolve, reject) => {
-    const headers: Headers = new Headers();
-    headers.set("Content-Type", "application/json");
+    const header: Headers = new Headers();
+    header.set("Content-Type", "application/json");
+    headers.forEach((value, key) => {
+      header.set(key, value);
+    });
     url = url.match(/^http(s)?:\/\//) ? url : baseURL + url;
     fetch(url, {
       method: "POST",
-      headers: headers,
+      headers: header,
       body: JSON.stringify(body),
     })
       .then((response: any) => {

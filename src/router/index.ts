@@ -55,6 +55,12 @@ export const routes = [
         component: import("../page/common/scan-qrcode.vue"),
         title: "二维码识别",
       },
+      {
+        path: "subtitle-translation",
+        name: "subtitle-translation",
+        component: import("../page/common/subtitle-translation.vue"),
+        title: "字幕翻译",
+      },
     ],
   },
   {
