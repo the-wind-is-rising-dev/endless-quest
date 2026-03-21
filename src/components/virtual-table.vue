@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import {
   ref,
   computed,
@@ -42,7 +42,7 @@ const props = defineProps({
 });
 
 // 引用
-const viewportRef = ref(null);
+const viewportRef = ref<any>(null);
 
 // 滚动位置
 const scrollTop = ref(0);
@@ -91,7 +91,7 @@ const offsetY = computed(() => startIndex.value * itemActualHeight.value);
 
 // 容器样式
 const containerStyle = computed(() => {
-  const style = {};
+  const style: any = {};
   style.width =
     typeof props.width === "number" ? `${props.width}px` : props.width;
   style.height =
@@ -110,7 +110,7 @@ const updateViewportHeight = () => {
 };
 
 // 滚动事件
-const onScroll = (e) => {
+const onScroll = (e: any) => {
   scrollTop.value = e.target.scrollTop;
 };
 
@@ -134,7 +134,7 @@ watch(
 );
 
 // 使用ResizeObserver监听视口尺寸变化
-let resizeObserver = null;
+let resizeObserver: any = null;
 
 onMounted(() => {
   // 初始化容器高度
@@ -156,57 +156,57 @@ onBeforeUnmount(() => {
     resizeObserver = null;
   }
 });
+defineExpose({
+  $el: viewportRef,
+});
 </script>
 
 <template>
+  <!-- 虚拟滚动视口 -->
   <div
-    class="virtual-scroll-container"
+    ref="viewportRef"
+    class="virtual-viewport"
     :style="containerStyle"
-    ref="containerRef"
+    @scroll="onScroll"
   >
-    <!-- 虚拟滚动视口 -->
-    <div ref="viewportRef" class="virtual-viewport" @scroll="onScroll">
-      <!-- 占位块，撑开滚动空间 -->
-      <div class="virtual-phantom" :style="{ height: totalHeight + 'px' }" />
+    <!-- 占位块，撑开滚动空间 -->
+    <div class="virtual-phantom" :style="{ height: totalHeight + 'px' }" />
 
-      <!-- 渲染内容区，绝对定位跟随滚动 -->
+    <!-- 渲染内容区，绝对定位跟随滚动 -->
+    <div
+      class="virtual-content"
+      :style="{ transform: `translateY(${offsetY}px)` }"
+    >
       <div
-        class="virtual-content"
-        :style="{ transform: `translateY(${offsetY}px)` }"
+        v-for="row in visibleRows"
+        :key="row.index"
+        :style="{ height: itemActualHeight + 'px' }"
       >
-        <div
-          v-for="row in visibleRows"
-          :key="row.index"
-          :style="{ height: itemActualHeight + 'px' }"
+        <!-- 通过插槽让外部自定义每一项的渲染内容 -->
+        <slot
+          name="item"
+          :item="{ ...row.data }"
+          :index="row.index"
+          :style="{ height: itemHeight + 'px' }"
         >
-          <!-- 通过插槽让外部自定义每一项的渲染内容 -->
-          <slot
-            name="item"
-            :item="{ ...row.data }"
-            :index="row.index"
-            :style="{ height: itemHeight + 'px' }"
-          >
-            <!-- 默认渲染，当外部没有提供自定义插槽时使用 -->
-            <div>
-              <span>#{{ row.index + 1 }}</span>
-              <span>{{ row.data }}</span>
-            </div>
-          </slot>
-        </div>
+          <!-- 默认渲染，当外部没有提供自定义插槽时使用 -->
+          <div>
+            <span>#{{ row.index + 1 }}</span>
+            <span>{{ row.data }}</span>
+          </div>
+        </slot>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.virtual-scroll-container {
-  display: flex;
-  flex-direction: column;
-}
 .virtual-viewport {
   position: relative;
-  overflow-y: auto;
+  display: flex;
   height: 100%;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 .virtual-phantom {
