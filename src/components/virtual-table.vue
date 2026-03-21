@@ -185,7 +185,7 @@ defineExpose({
         <!-- 通过插槽让外部自定义每一项的渲染内容 -->
         <slot
           name="item"
-          :item="{ ...row.data }"
+          :item="row.data"
           :index="row.index"
           :style="{ height: itemHeight + 'px' }"
         >
