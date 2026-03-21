@@ -2,11 +2,40 @@
 import { message } from "ant-design-vue";
 import VirtualTable from "../../components/virtual-table.vue";
 import { Base64 } from "js-base64";
-import { onActivated, ref } from "vue";
+import { onActivated, ref, watch } from "vue";
 import { subtitleTranslate } from "../../api/agent";
+import storage from "../../utils/storage";
+import { v4 as uuidv4 } from "uuid";
+import { CloseCircleOutlined } from "@ant-design/icons-vue";
 
-const currentHistoryIndex = ref<number>();
+const HISTORY_STORAGE_KEY = "subtitle-translate-history";
+const AUTHORIZATION_STORAGE_KEY = "subtitle-translate-authorization";
+const currentHistoryIndex = ref<number>(0);
 const historyList = ref<any[]>([]);
+// 选择历史记录
+function onSelectHistory(index: number) {
+  if (translating.value) {
+    message.warn("请等待翻译完成");
+    return;
+  }
+  if (index < 0 || index >= historyList.value.length) return;
+  currentHistoryIndex.value = index;
+  translationCode.value = historyList.value[index].translationCode;
+  subtitleFilename.value = historyList.value[index].filename;
+  subtitleBlockList.value = JSON.parse(
+    JSON.stringify(historyList.value[index].subtitleList),
+  );
+}
+// 删除历史记录
+function onDeleteHistory(index: number) {
+  historyList.value.splice(index, 1);
+  currentHistoryIndex.value = index;
+  saveHistory();
+}
+// 保存历史记录
+function saveHistory() {
+  storage.set(HISTORY_STORAGE_KEY, historyList.value);
+}
 interface SubtitleBlock {
   index: string;
   timerShaft: string;
@@ -16,7 +45,7 @@ interface SubtitleBlock {
 // 禁用字幕编辑
 const isDisabledEdit = ref<boolean>(false);
 const space = 8;
-const itemHeight = 125;
+const itemHeight = 150;
 const subtitleBlockList = ref<SubtitleBlock[]>([]);
 
 const subtitleInput = ref<any>(null);
@@ -91,6 +120,7 @@ function handleSubtitleUpload(event: any) {
     if (scrollViewRef.value.$el) {
       scrollViewRef.value.$el.scrollTop = 0;
     }
+    currentHistoryIndex.value = -1;
   };
   reader.readAsDataURL(file);
 }
@@ -115,6 +145,7 @@ function srtSubtitleParse(subtitle: string): SubtitleBlock[] {
 
 // 翻译中
 const translating = ref<boolean>(false);
+const translationCode = ref<string>("");
 const authorization = ref<string>("");
 // 翻译字幕
 async function onTranslateClick() {
@@ -129,6 +160,17 @@ async function onTranslateClick() {
   if (translating.value) {
     return;
   }
+  message.success("开始翻译");
+  translationCode.value = uuidv4();
+  historyList.value = [
+    {
+      translationCode: translationCode.value,
+      filename: subtitleFilename.value.split(".")[0] + `-${language.value}`,
+      subtitleList: subtitleBlockList.value.map((it) => (it.translation = "")),
+    },
+    ...historyList.value,
+  ];
+  currentHistoryIndex.value = -1;
   translating.value = true;
   isDisabledEdit.value = true;
   isDisabledSave.value = true;
@@ -146,7 +188,7 @@ async function onTranslateClick() {
     let result = "";
     await subtitleTranslate(
       subtitle,
-      authorization.value,
+      authorization.value.trim(),
       language.value,
       (_done: boolean, _reason: string, content: string) => {
         result = result + content;
@@ -169,10 +211,25 @@ async function onTranslateClick() {
       translating.value = false;
       isDisabledEdit.value = false;
       isDisabledSave.value = false;
+      message.success("翻译成功");
     });
   }
 }
 
+// 监听字幕翻译变化，保存历史记录
+watch(
+  subtitleBlockList,
+  () => {
+    if (translating.value) {
+      historyList.value[0].subtitleList = subtitleBlockList.value;
+      saveHistory();
+    }
+  },
+  { deep: true },
+);
+watch(authorization, () => {
+  storage.set(AUTHORIZATION_STORAGE_KEY, authorization.value);
+});
 // 禁用保存按钮
 const isDisabledSave = ref<boolean>(false);
 /// 保存翻译结果
@@ -214,19 +271,45 @@ onActivated(() => {
   // 路由页面激活时重新控制页面滚动至顶部
   scrollViewRef.value.$el.scrollTop = scrollTop.value;
 });
+// 初始化
+function init() {
+  const history = storage.get(HISTORY_STORAGE_KEY);
+  if (history && history.length > 0) {
+    historyList.value = history;
+    onSelectHistory(0);
+  }
+  const auth = storage.get(AUTHORIZATION_STORAGE_KEY);
+  authorization.value = auth;
+}
+init();
 </script>
 <template>
   <div class="subtitle-root row">
     <!-- 翻译历史记录 -->
     <div class="translation-history column">
       <div>翻译记录</div>
-      <div class="column" style="overflow-y: auto">
+      <div v-if="historyList.length <= 0" style="margin: auto">暂无记录</div>
+      <div v-else class="column" style="overflow-y: auto">
         <div
-          class="history-item"
           v-for="(item, index) in historyList"
           :key="index"
+          :class="`history-item center ${currentHistoryIndex == index ? 'selected' : ''}`"
+          @click="onSelectHistory(index)"
         >
-          {{ item.name }}
+          <div class="title">
+            {{ item.filename }}
+          </div>
+          <a-popconfirm
+            title="确定删除该记录?"
+            ok-text="确定"
+            cancel-text="取消"
+            @confirm="onDeleteHistory(index)"
+          >
+            <CloseCircleOutlined
+              style="color: var(--status-error)"
+              @click.stop
+            />
+          </a-popconfirm>
         </div>
       </div>
     </div>
@@ -266,8 +349,8 @@ onActivated(() => {
         <!-- deepseek token -->
         <a-input
           v-model:value="authorization"
-          placeholder="Deepseek token"
-          style="width: 150px; margin-right: var(--space-lg)"
+          placeholder="填写 Deepseek token"
+          style="width: 160px; margin-right: var(--space-lg)"
         />
         <!-- 开始翻译按钮 -->
         <a-button
@@ -333,7 +416,7 @@ onActivated(() => {
                 <a-textarea
                   v-model:value="item.translation"
                   :disabled="isDisabledEdit"
-                  :rows="1.5"
+                  :rows="2"
                   style="width: 650px"
                 />
               </div>
@@ -359,9 +442,22 @@ onActivated(() => {
   .history-item {
     padding: var(--space-sm);
     cursor: pointer;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-xs);
+    .title {
+      width: 140px;
+      margin-right: auto;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     &.selected {
+      background-color: var(--brand-accent);
+      color: var(--text-inverse);
     }
     &:hover {
+      background-color: var(--brand-accent);
+      color: var(--text-inverse);
     }
   }
 }
