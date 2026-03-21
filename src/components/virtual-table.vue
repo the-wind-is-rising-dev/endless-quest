@@ -40,6 +40,9 @@ const props = defineProps({
     default: 5,
   },
 });
+defineSlots<{
+  item(props: { item: any; index: number }): void;
+}>();
 
 // 引用
 const viewportRef = ref<any>(null);
