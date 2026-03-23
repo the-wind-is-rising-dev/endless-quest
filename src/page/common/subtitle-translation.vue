@@ -7,6 +7,7 @@ import { subtitleTranslate } from "../../api/agent";
 import storage from "../../utils/storage";
 import { v4 as uuidv4 } from "uuid";
 import { CloseCircleOutlined } from "@ant-design/icons-vue";
+import { parse as parseVTT } from "@plussub/srt-vtt-parser";
 
 const HISTORY_STORAGE_KEY = "subtitle-translate-history";
 const AUTHORIZATION_STORAGE_KEY = "subtitle-translate-authorization";
@@ -91,12 +92,12 @@ function handleSubtitleUpload(event: any) {
   // 检查文件类型
   if (
     !file.name.endsWith(".srt") &&
+    !file.name.endsWith(".vtt") &&
     !file.name.endsWith(".ass") &&
     !file.name.endsWith(".ssa") &&
     !file.name.endsWith(".ttml") &&
     !file.name.endsWith(".tt") &&
-    !file.name.endsWith(".itt") &&
-    !file.name.endsWith(".ttml")
+    !file.name.endsWith(".itt")
   ) {
     alert("请选择字幕文件");
     return;
@@ -116,7 +117,12 @@ function handleSubtitleUpload(event: any) {
     const subtitleOriginal = Base64.decode(
       e.target.result.replace(/^data:.+;base64,/, ""),
     );
-    subtitleBlockList.value = srtSubtitleParse(subtitleOriginal);
+    if (file.name.endsWith(".srt")) {
+      subtitleBlockList.value = srtSubtitleParse(subtitleOriginal);
+    }
+    if (file.name.endsWith(".vtt")) {
+      subtitleBlockList.value = vttSubtitleParse(subtitleOriginal);
+    }
     if (scrollViewRef.value.$el) {
       scrollViewRef.value.$el.scrollTop = 0;
     }
@@ -125,22 +131,58 @@ function handleSubtitleUpload(event: any) {
   reader.readAsDataURL(file);
 }
 
-// srt字幕解析函数
+// srt 字幕解析函数
 function srtSubtitleParse(subtitle: string): SubtitleBlock[] {
-  // 按空行分割字幕块, 第一行：序号，第二行：时间轴，其余行：字幕文本
-  const blocks = subtitle.trim().split("\n\n");
-  return blocks.map((block) => {
-    const lines: string[] = block
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line !== "");
-    return {
-      index: lines[0],
-      timerShaft: lines[1],
-      original: lines.slice(2).join("\n"),
-      translation: "",
+  try {
+    // 按空行分割字幕块, 第一行：序号，第二行：时间轴，其余行：字幕文本
+    const blocks = subtitle.trim().split("\n\n");
+    return blocks.map((block, index) => {
+      const lines: string[] = block
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
+      return {
+        index: lines[0] ? lines[0] : `${index + 1}`,
+        timerShaft: lines[1],
+        original: lines.slice(2).join("\n"),
+        translation: "",
+      };
+    });
+  } catch (err) {
+    message.error("SRT 字幕解析失败:" + err);
+    throw err;
+  }
+}
+
+// vtt 字幕解析函数
+function vttSubtitleParse(subtitle: string): SubtitleBlock[] {
+  // 格式化字幕时间
+  const formatTime = (ms: number): string => {
+    const seconds = ms / 1000;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    ms = ms % 1000;
+    const padZero = (num: number, length: number = 2): string => {
+      return num.toString().padStart(length, "0");
     };
-  });
+    return `${padZero(hours)}:${padZero(minutes)}:${padZero(secs)},${padZero(ms, 3)}`;
+  };
+  try {
+    const { entries } = parseVTT(subtitle);
+    console.log(entries);
+    return entries.map((cue, index) => {
+      return {
+        index: cue.id ? cue.id : `${index + 1}`,
+        timerShaft: `${formatTime(cue.from)} --> ${formatTime(cue.to)}`,
+        original: cue.text,
+        translation: "",
+      };
+    });
+  } catch (err) {
+    message.error("VTT 解析失败:" + err);
+    throw err;
+  }
 }
 
 // 翻译中
@@ -326,7 +368,7 @@ init();
           <input
             ref="subtitleInput"
             type="file"
-            accept=".srt,.ass,.ssa,.ttml,.tt,.itt,.ttml"
+            accept=".srt,.vtt,.ass,.ssa,.ttml,.tt,.itt"
             @change="handleSubtitleUpload"
             style="display: none"
           />
