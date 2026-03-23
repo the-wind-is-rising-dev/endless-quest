@@ -119,7 +119,7 @@ function handleSubtitleUpload(event: any) {
       subtitleBlockList.value = srtSubtitleParse(subtitleOriginal);
     } else if (file.name.endsWith(".vtt")) {
       subtitleBlockList.value = vttSubtitleParse(subtitleOriginal);
-    } else {
+    } else if (file.name.endsWith(".ass") || file.name.endsWith(".ssa")) {
       subtitleBlockList.value = assAndSsaSubtitleParse(subtitleOriginal);
     }
     if (scrollViewRef.value.$el) {
