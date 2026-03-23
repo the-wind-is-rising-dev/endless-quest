@@ -8,6 +8,7 @@ import storage from "../../utils/storage";
 import { v4 as uuidv4 } from "uuid";
 import { CloseCircleOutlined } from "@ant-design/icons-vue";
 import { parse as parseVTT } from "@plussub/srt-vtt-parser";
+import { parse as parseASS } from "ass-compiler";
 
 const HISTORY_STORAGE_KEY = "subtitle-translate-history";
 const AUTHORIZATION_STORAGE_KEY = "subtitle-translate-authorization";
@@ -94,10 +95,7 @@ function handleSubtitleUpload(event: any) {
     !file.name.endsWith(".srt") &&
     !file.name.endsWith(".vtt") &&
     !file.name.endsWith(".ass") &&
-    !file.name.endsWith(".ssa") &&
-    !file.name.endsWith(".ttml") &&
-    !file.name.endsWith(".tt") &&
-    !file.name.endsWith(".itt")
+    !file.name.endsWith(".ssa")
   ) {
     alert("请选择字幕文件");
     return;
@@ -119,9 +117,10 @@ function handleSubtitleUpload(event: any) {
     );
     if (file.name.endsWith(".srt")) {
       subtitleBlockList.value = srtSubtitleParse(subtitleOriginal);
-    }
-    if (file.name.endsWith(".vtt")) {
+    } else if (file.name.endsWith(".vtt")) {
       subtitleBlockList.value = vttSubtitleParse(subtitleOriginal);
+    } else {
+      subtitleBlockList.value = assAndSsaSubtitleParse(subtitleOriginal);
     }
     if (scrollViewRef.value.$el) {
       scrollViewRef.value.$el.scrollTop = 0;
@@ -181,6 +180,37 @@ function vttSubtitleParse(subtitle: string): SubtitleBlock[] {
     });
   } catch (err) {
     message.error("VTT 解析失败:" + err);
+    throw err;
+  }
+}
+
+// ass、ssa 字幕解析
+function assAndSsaSubtitleParse(subtitle: string) {
+  // 格式化字幕时间
+  const formatTime = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    const ms = Math.floor((seconds % 1) * 1000);
+    const padZero = (num: number, length: number = 2): string => {
+      return num.toString().padStart(length, "0");
+    };
+    return `${padZero(hours)}:${padZero(minutes)}:${padZero(secs)},${padZero(ms, 3)}`;
+  };
+  try {
+    return parseASS(subtitle).events.dialogue.map((event, index) => {
+      return {
+        index: `${index + 1}`,
+        timerShaft: formatTime(event.Start) + " --> " + formatTime(event.End),
+        original: event.Text.raw
+          .replace(/\\N/g, "\n") // 换行符转换
+          .replace(/\{[^}]*\}/g, ""), // 移除 ASS 样式标签,
+        translation: "",
+      };
+    });
+  } catch (err) {
+    message.error("字幕解析失败:" + err);
+    console.error("字幕解析失败:", err);
     throw err;
   }
 }
@@ -368,7 +398,7 @@ init();
           <input
             ref="subtitleInput"
             type="file"
-            accept=".srt,.vtt,.ass,.ssa,.ttml,.tt,.itt"
+            accept=".srt,.vtt,.ass,.ssa"
             @change="handleSubtitleUpload"
             style="display: none"
           />
