@@ -61,6 +61,12 @@ export const routes = [
         component: import("../page/common/subtitle-translation.vue"),
         title: "字幕翻译",
       },
+      {
+        path: "camera-recording",
+        name: "camera-recording",
+        component: import("../page/common/camera-recording.vue"),
+        title: "视频录制",
+      },
     ],
   },
   {

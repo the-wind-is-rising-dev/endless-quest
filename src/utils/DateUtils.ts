@@ -8,12 +8,17 @@ class DateTimeUtils {
     now = now ? now : new Date();
     return Date.parse(now.toString());
   }
+
+  public format(date: Date, pattern: string = "YYYY-MM-DD HH:mm:ss") {
+    return this.formatDateTime(date, pattern);
+  }
+
   /**
    * 格式化日期
    */
   public formatDateTime(
     date: Date,
-    pattern: string = "YYYY-MM-DD HH:mm:ss"
+    pattern: string = "YYYY-MM-DD HH:mm:ss",
   ): string {
     const map: { [key: string]: number } = {
       YYYY: date.getFullYear(),
@@ -39,7 +44,7 @@ class DateTimeUtils {
     const formatRegex = /^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/;
     if (!formatRegex.test(dateTimeStr)) {
       throw new Error(
-        `Invalid date format: ${dateTimeStr}. Expected format: YYYY-MM-DD HH:MM:SS`
+        `Invalid date format: ${dateTimeStr}. Expected format: YYYY-MM-DD HH:MM:SS`,
       );
     }
 
