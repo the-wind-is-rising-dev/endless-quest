@@ -132,6 +132,7 @@ function onRecordStop() {
     console.log("录制完成，文件大小:", blob?.size);
     // 生成视频 URL
     if (blob) {
+      video.value = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = video.value;
       a.download = `无尽求索-工具站.${format.value.split("/")[1]}`;
