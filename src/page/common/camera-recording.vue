@@ -201,7 +201,7 @@ function onRecordStop() {
       class="camera-preview center"
       :style="`width: ${previewWidth}px; height:${previewHeight}px`"
     >
-      <!-- <video ref="videoRef" class="video" autoplay playsinline muted /> -->
+      <video ref="videoRef" class="video" autoplay playsinline muted />
     </div>
   </div>
 </template>
