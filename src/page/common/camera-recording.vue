@@ -136,6 +136,7 @@ function onRecordStop() {
       a.href = video.value;
       a.download = `无尽求索-工具站.${format.value.split("/")[1]}`;
       a.click();
+      console.log("视频 URL:", video.value);
 
       message.success("视频录制结束");
     } else {
