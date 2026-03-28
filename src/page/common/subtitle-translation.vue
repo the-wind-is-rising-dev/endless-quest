@@ -453,7 +453,6 @@ init();
           :items="subtitleBlockList"
           :space="space"
           :itemHeight="itemHeight"
-          :visible-rows="10"
           @scroll="(top: number) => (scrollTop = top)"
         >
           <template #item="{ item }">
