@@ -29,7 +29,7 @@ const props = defineProps({
     type: [String, Number],
     default: "100%",
   },
-  // item 间距 (可选，默认5px)
+  // item 间距 (可选，默认8px)
   space: {
     type: Number,
     default: 8,
@@ -44,17 +44,76 @@ defineSlots<{
   item(props: { item: any; index: number }): void;
 }>();
 
+// 引用
+const viewportRef = ref<any>(null);
+// 实际容器高度 (动态计算)
+const viewportHeight = ref(0);
+// 滚动位置
+const scrollTop = ref(0);
+// 滚动事件
 const emit = defineEmits<{
   (e: "scroll", scrollTop: number): void;
 }>();
+const onScroll = (e: any) => {
+  scrollTop.value = e.target.scrollTop;
+  emit("scroll", scrollTop.value);
+};
 
-// 引用
-const viewportRef = ref<any>(null);
-
-// 滚动位置
-const scrollTop = ref(0);
-// 实际容器高度 (动态计算)
-const viewportHeight = ref(0);
+// 容器样式
+const containerStyle = computed(() => {
+  const style: any = {};
+  style.width =
+    typeof props.width === "number" ? `${props.width}px` : props.width;
+  style.height =
+    typeof props.height === "number" ? `${props.height}px` : props.height;
+  return style;
+});
+// 更新容器高度
+const updateViewportHeight = () => {
+  if (viewportRef.value) {
+    const height = viewportRef.value.clientHeight;
+    if (viewportHeight.value !== height) {
+      viewportHeight.value = height;
+    }
+  }
+};
+// 使用ResizeObserver监听视口尺寸变化
+let resizeObserver: any = null;
+onMounted(() => {
+  // 初始化容器高度
+  updateViewportHeight();
+  // 监听容器大小变化
+  resizeObserver = new ResizeObserver(() => {
+    updateViewportHeight();
+  });
+  if (viewportRef.value) {
+    resizeObserver.observe(viewportRef.value);
+  }
+});
+onBeforeUnmount(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+    resizeObserver = null;
+  }
+});
+// 监听数据变化，确保滚动位置有效
+watch(
+  () => props.items,
+  () => {
+    // 如果数据变化后总高度变小，且当前滚动位置超出范围，修正滚动
+    nextTick(() => {
+      if (viewportRef.value) {
+        const maxScroll = Math.max(
+          0,
+          totalHeight.value - viewportRef.value.clientHeight,
+        );
+        if (viewportRef.value.scrollTop > maxScroll) {
+          viewportRef.value.scrollTop = maxScroll;
+        }
+      }
+    });
+  },
+);
 
 // 每项实际高度
 const itemActualHeight = computed(() => {
@@ -92,78 +151,9 @@ const visibleRows = computed(() => {
     }))
     .slice(start, end + 1);
 });
-
 // 偏移量
 const offsetY = computed(() => startIndex.value * itemActualHeight.value);
 
-// 容器样式
-const containerStyle = computed(() => {
-  const style: any = {};
-  style.width =
-    typeof props.width === "number" ? `${props.width}px` : props.width;
-  style.height =
-    typeof props.height === "number" ? `${props.height}px` : props.height;
-  return style;
-});
-
-// 更新容器高度
-const updateViewportHeight = () => {
-  if (viewportRef.value) {
-    const height = viewportRef.value.clientHeight;
-    if (viewportHeight.value !== height) {
-      viewportHeight.value = height;
-    }
-  }
-};
-
-// 滚动事件
-const onScroll = (e: any) => {
-  scrollTop.value = e.target.scrollTop;
-  emit("scroll", scrollTop.value);
-};
-
-// 监听数据变化，确保滚动位置有效
-watch(
-  () => props.items,
-  () => {
-    // 如果数据变化后总高度变小，且当前滚动位置超出范围，修正滚动
-    nextTick(() => {
-      if (viewportRef.value) {
-        const maxScroll = Math.max(
-          0,
-          totalHeight.value - viewportRef.value.clientHeight,
-        );
-        if (viewportRef.value.scrollTop > maxScroll) {
-          viewportRef.value.scrollTop = maxScroll;
-        }
-      }
-    });
-  },
-);
-
-// 使用ResizeObserver监听视口尺寸变化
-let resizeObserver: any = null;
-
-onMounted(() => {
-  // 初始化容器高度
-  updateViewportHeight();
-
-  // 监听容器大小变化
-  resizeObserver = new ResizeObserver(() => {
-    updateViewportHeight();
-  });
-
-  if (viewportRef.value) {
-    resizeObserver.observe(viewportRef.value);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (resizeObserver) {
-    resizeObserver.disconnect();
-    resizeObserver = null;
-  }
-});
 defineExpose({
   $el: viewportRef,
 });
@@ -212,7 +202,6 @@ defineExpose({
 .virtual-viewport {
   position: relative;
   display: flex;
-  height: 100%;
   flex-direction: column;
   overflow-y: auto;
 }
