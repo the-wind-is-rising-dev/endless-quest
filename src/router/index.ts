@@ -99,6 +99,12 @@ export const routes = [
         component: import("../page/algorithm/aes.vue"),
         title: "AES 加密",
       },
+      {
+        path: "rsa",
+        name: "RSA",
+        component: import("../page/algorithm/rsa.vue"),
+        title: "RSA 加密",
+      },
     ],
   },
   // {
