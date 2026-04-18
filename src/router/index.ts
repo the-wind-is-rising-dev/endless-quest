@@ -93,6 +93,12 @@ export const routes = [
         component: import("../page/algorithm/sha256.vue"),
         title: "SHA-256 摘要",
       },
+      {
+        path: "aes",
+        name: "AES",
+        component: import("../page/algorithm/aes.vue"),
+        title: "AES 加密",
+      },
     ],
   },
   // {
