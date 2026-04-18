@@ -1,9 +1,17 @@
 <script lang="ts" setup>
+/**
+ * AES 加密/解密组件
+ * 支持多种加密模式、填充方式和密钥长度
+ * 提供 Base64 和十六进制格式的输出
+ */
 import { message } from "ant-design-vue";
 import { ref } from "vue";
 import { MergeCellsOutlined, SplitCellsOutlined } from "@ant-design/icons-vue";
 import CryptoJS from "crypto-js";
 
+/**
+ * 加密模式选项
+ */
 const modeOptions = [
   {
     value: "CBC",
@@ -32,6 +40,9 @@ const modeOptions = [
   },
 ];
 
+/**
+ * 填充方式选项
+ */
 const paddingOptions = [
   {
     value: "Pkcs7",
@@ -60,21 +71,32 @@ const paddingOptions = [
   },
 ];
 
+/**
+ * 密钥长度选项
+ */
 const keyLengthOptions = [
   { value: 128, label: "128 位", description: "16 字节密钥" },
   { value: 192, label: "192 位", description: "24 字节密钥" },
   { value: 256, label: "256 位", description: "32 字节密钥" },
 ];
 
+// 内容列表
 const contentList = ref<string[]>([""]);
+// 密钥列表
 const keyList = ref<string[]>([""]);
+// IV 向量列表
 const ivList = ref<string[]>([""]);
+// 输出结果列表（包含 Base64、十六进制和 UTF-8 格式）
 const outputList = ref<{ base64: string; hex: string; utf8: string }[]>([
   { base64: "", hex: "", utf8: "" },
 ]);
+// 选择的加密模式列表
 const selectedModeList = ref<string[]>(["CBC"]);
+// 选择的填充方式列表
 const selectedPaddingList = ref<string[]>(["Pkcs7"]);
+// 选择的密钥长度列表
 const selectedKeyLengthList = ref<number[]>([128]);
+// 加密/解密模式列表
 const isEncryptList = ref<boolean[]>([true]);
 
 /**
@@ -98,6 +120,10 @@ function generateRandomIV(): string {
   return CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex);
 }
 
+/**
+ * 为指定窗口生成随机密钥
+ * @param index 窗口索引
+ */
 function generateKey(index: number) {
   const keyLength = selectedKeyLengthList.value[index];
   const key = generateRandomKey(keyLength / 8);
@@ -105,17 +131,31 @@ function generateKey(index: number) {
   message.success("已生成随机密钥");
 }
 
+/**
+ * 为指定窗口生成随机 IV 向量
+ * @param index 窗口索引
+ */
 function generateIV(index: number) {
   const iv = generateRandomIV();
   ivList.value.splice(index, 1, iv);
   message.success("已生成随机 IV 向量");
 }
 
+/**
+ * 检查字符串是否为十六进制格式
+ * @param str 要检查的字符串
+ * @returns 是否为十六进制格式
+ */
 function isHexFormat(str: string): boolean {
   return /^[0-9a-fA-F]+$/.test(str) && str.length % 2 === 0;
 }
 
+/**
+ * 执行加密或解密操作
+ * @param index 窗口索引
+ */
 function onCalculate(index: number) {
+  // 验证输入内容
   if (!contentList.value[index]) {
     message.warning("请输入内容");
     return;
@@ -250,6 +290,10 @@ function onCalculate(index: number) {
   message.success(isEncrypt ? "加密成功" : "解密成功");
 }
 
+/**
+ * 合并窗口
+ * @param index 要删除的窗口索引
+ */
 function onCompressCodemirror(index: number) {
   if (contentList.value.length <= 1) {
     message.warning("至少保留一个窗口");
@@ -266,6 +310,10 @@ function onCompressCodemirror(index: number) {
   message.success("删除成功");
 }
 
+/**
+ * 拆分窗口
+ * @param index 要拆分的窗口索引
+ */
 function onSplitCodemirror(index: number) {
   if (contentList.value.length >= 2) {
     message.warning("最多两个窗口");
